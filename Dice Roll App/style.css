@@ -1,0 +1,25 @@
+#container{
+    font-family:Ariel, sans-serif;
+    text-align:center;
+    font-size:2rem;
+    font-weight:bold;
+}
+button{
+    font-size:1.5rem;
+    padding: 10px 15px;
+    border-radius: 10px;
+    border: none;
+    background-color: aqua;
+    color:white;
+    font-weight:bold;
+    cursor: pointer;
+}
+button:hover{
+    background-color: rgb(2, 150, 150);
+}
+input{
+    font-size: 2rem;
+    width:150px;
+    text-align:center;
+    font-weight:bold;
+}
