@@ -26,6 +26,10 @@ function generatePassword(){
         const randomIndex = Math.floor(Math.random()*allowedChars.length);
         generatedPassword[i]=allowedChars[randomIndex];
     }
-    document.getElementById("generatedPassword").textContent=generatedPassword.join("");
+    document.getElementById("generatedPassword").textContent=`Your generated password is: ${generatedPassword.join("")}`;
+
+    if (!lower.checked&&!upper.checked&&!number.checked&&!specialChars.checked){
+        document.getElementById("generatedPassword").textContent="You need to at least check a box";
+    }
     console.log("this is working well");
 }
