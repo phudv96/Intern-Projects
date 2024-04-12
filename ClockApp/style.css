@@ -1,0 +1,23 @@
+body{
+    background-image: url(qtsc-telecom.jpg);
+    background-position: center;
+    background-size: cover;
+    margin:0;
+}
+#clockContainer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height:100vh;
+    border: 2px solid;
+}
+#clock{
+    font-family: monospace;
+    font-size: 6.5rem;
+    font-weight: bold;
+    text-align: center;
+    color: rgb(255, 255, 255);
+    backdrop-filter: blur(2px);
+    background-color:hsla(0, 0%, 83%, 0.26);
+    width: 100%;
+}
