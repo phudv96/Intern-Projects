@@ -1,0 +1,42 @@
+body{
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: hsl(180, 70%, 51%);
+}
+#myH1{
+    font-size:4em;
+    font-family:Arial, Arial, Helvetica, sans-serif;
+    color: white;
+}
+#container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px;
+    border: 5px solid;
+    border-radius: 50px;
+    background-color: hsl(182, 33%, 84%);
+}
+
+#display{
+    font-size: 5rem;
+    font-family: monospace;
+    font-weight: bold;
+    color: hsl(39, 66%, 57%);
+    text-shadow: 2px 2px 2px hsl(39, 62%, 46%);
+    margin-bottom: 25px;
+}
+
+#control button{
+    font-size: 1.5rem;
+    font-weight: bold;
+    padding: 10px 20px;
+    margin: 5px;
+    min-width: 125px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    color: hsl(184, 47%, 71%);
+    background-color: black;
+}
