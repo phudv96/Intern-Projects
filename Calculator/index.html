@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href = "style.css">
+</head>
+<body>
+    <div id="calculator">
+
+    <input id="displayScreen" readonly>
+        <div id="keys">
+            <button onclick="deleteButt()" class="operator">DEL</button>
+            <button onclick="clearDisplay()" class="operator">C</button>
+            <button onclick="pushToDisplay('%')"class="operator">%</button>
+            <button onclick="pushToDisplay('/')"class="operator">/</button>
+            <button onclick="pushToDisplay('7')">7</button>
+            <button onclick="pushToDisplay('8')">8</button>
+            <button onclick="pushToDisplay('9')">9</button>
+            <button onclick="pushToDisplay('*')"class="operator">*</button>
+            <button onclick="pushToDisplay('4')">4</button>
+            <button onclick="pushToDisplay('5')">5</button>
+            <button onclick="pushToDisplay('6')">6</button>
+            <button onclick="pushToDisplay('-')"class="operator">-</button>
+            <button onclick="pushToDisplay('1')">1</button>
+            <button onclick="pushToDisplay('2')">2</button>
+            <button onclick="pushToDisplay('3')">3</button>
+            <button onclick="pushToDisplay('+')"class="operator">+</button>
+            <button onclick="pushToDisplay('.')">.</button>
+            <button onclick="pushToDisplay('0')">0</button>
+            <button onclick="calculate()"" id="calculate">=</button>
+        </div>
+    </div>
+    <script src="index.js">
+</body>
+</html>
