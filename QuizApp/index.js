@@ -84,6 +84,8 @@ let currentQuestion = quizData[currentIndex].question;
 let currentOption = quizData[currentIndex].options;
 let currentAnswer = quizData[currentIndex].answer;
 
+start();
+
 function start(){
     let playerName="Guest";
     /*while(playerName=="Guest" || playerName==""){
@@ -91,10 +93,20 @@ function start(){
 
     nameSpace.textContent=`${playerName} - Attempt: ${attempt}`;
     nameSpace.style.display="block";
-    displayQuestion(currentIndex);
+    displayQuestion();
 }
 
 function displayQuestion(){
+  if (currentIndex === quizData.length){
+    displayResult();
+    return;
+  }
+  else{
+    optionContainer.innerHTML = '';
+    questionContainer.textContent = '';
+    currentQuestion = quizData[currentIndex].question;
+    currentOption = quizData[currentIndex].options;
+    currentAnswer = quizData[currentIndex].answer;
     questionContainer.textContent=currentQuestion;
     for (let i=0; i<currentOption.length;i++){
         const newOption = document.createElement('input');
@@ -116,14 +128,33 @@ function displayQuestion(){
         console.log(newOption);
     }
 }
-
+}
 function submitAction(){
     const userAnswer = optionContainer.querySelector('input[type="radio"]:checked');
     if (userAnswer.value==currentAnswer){
-        console.log("congrat, you got 1 point");
+        score ++;
+        console.log(score);
     }
     else{
-        console.log("try again, bozo");
+        incorrectAnswers.push({
+          wrongAnswer: userAnswer.value,
+          wrongIndex: currentIndex
+        });
+        console.log(incorrectAnswers);
     }
+    currentIndex ++;
+    console.log(currentIndex);
+    displayQuestion();
 }
-start();
+
+function displayResult(){
+  location.href = 'resultSide.html';
+}
+
+function retryAction(){
+  location.href='quizSide.html';
+  currentIndex = 0;
+  score = 0;
+  attempt ++;
+  let incorrectAnswers = [];
+}
