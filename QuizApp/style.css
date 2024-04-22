@@ -33,6 +33,7 @@ h1 {
 option {
     display: block;
     margin-bottom: 10px;
+    font-weight: lighter;
 }
   
 button {
