@@ -30,29 +30,29 @@ const quizData = [
       answer: 'Pacific Ocean',
     },
     {
-      question: 'What is the chemical symbol for gold?',
+      question: 'What is the name of the giant Japanese monster who was born by radiation?',
       options: null,
-      answer: 'Au',
+      answer: 'Godzilla',
     },
     {
-      question: 'Who painted the Mona Lisa?',
+      question: 'How many bits are in a byte?',
       options: null,
-      answer: 'Leonardo da Vinci',
+      answer: '8',
     },
     {
-      question: 'Which planet is known as the Red Planet?',
+      question: 'Which planet was demoted to a dwarf-plant in 2006?',
       options: null,
-      answer: 'Mars',
+      answer: 'Pluto',
     },
     {
-      question: 'What is the largest species of shark?',
+      question: 'Which video game has the biggest esport scene in 2023?',
       options: null,
-      answer: 'Whale Shark',
+      answer: 'League of Legends',
     },
     {
-      question: 'Which animal is known as the King of the Jungle?',
+      question: 'Which Greek Demi-god did Disney make a movie about?',
       options: null,
-      answer: 'Lion',
+      answer: 'Hercules',
     },
   ];
 
