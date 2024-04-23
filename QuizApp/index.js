@@ -60,11 +60,10 @@ const nameSpace = document.getElementById('nameSpace');
 const resultContainer = document.getElementById('result');
 const questionContainer = document.getElementById('questions');
 const optionContainer = document.getElementById('options');
-//localStorage.clear();
-let currentIndex = parseInt(localStorage.getItem('currentIndex')) || 0;//using localStorage so we won't lose data when switching to another html file
-let score = parseInt(localStorage.getItem('score')) || 0;
-let attempt = parseInt(localStorage.getItem('attempt')) || 1;
-let incorrectAnswers = JSON.parse(localStorage.getItem('incorrectAnswers')) || [];
+let currentIndex = parseInt(sessionStorage.getItem('currentIndex')) || 0;//using sessionStorage so we won't lose data when switching to another html file
+let score = parseInt(sessionStorage.getItem('score')) || 0;
+let attempt = parseInt(sessionStorage.getItem('attempt')) || 1;
+let incorrectAnswers = JSON.parse(sessionStorage.getItem('incorrectAnswers')) || [];
 let currentQuestion = currentIndex < quizData.length ? quizData[currentIndex].question : null; //setting defaul data in case index exceed array length
 let currentOption = currentIndex < quizData.length ? quizData[currentIndex].options : null;
 let currentAnswer = currentIndex < quizData.length ? quizData[currentIndex].answer : null;
@@ -101,7 +100,7 @@ function displayQuestion(){
     currentOption = quizData[currentIndex].options;
     currentAnswer = quizData[currentIndex].answer;
     questionContainer.textContent=currentQuestion;
-    if ((quizData[currentIndex].options==null)){
+    if ((quizData[currentIndex].options==null)){ //check if multiple choice or open question
     generateInput();
     }
     else{
@@ -142,7 +141,7 @@ function generateOption(){
 function submitAction(){
   const checkedRadio = optionContainer.querySelector('input[type="radio"]:checked');
   const textInput = optionContainer.querySelector('input[type="text"]');
-  if(checkedRadio || textInput){
+  if(checkedRadio || textInput){//check if there has been an input
     const userAnswer = checkedRadio ? checkedRadio.value : textInput.value;
     if (userAnswer.toLowerCase() === currentAnswer.toLowerCase()) {
       if (textInput) {
@@ -162,11 +161,11 @@ function submitAction(){
           wrongAnswerIndex++;
       }
     currentIndex ++;
-    localStorage.setItem('currentIndex', currentIndex);
-    localStorage.setItem('score', score);
+    sessionStorage.setItem('currentIndex', currentIndex); //pushing index to sessionStorage for use later
+    sessionStorage.setItem('score', score);
     console.log(`question number: ${currentIndex}`);
     console.log(`score ${score}`);
-    localStorage.setItem('incorrectAnswers', JSON.stringify(incorrectAnswers));
+    sessionStorage.setItem('incorrectAnswers', JSON.stringify(incorrectAnswers));
     displayQuestion();
   }
   else{
@@ -185,11 +184,11 @@ function displayResult(){
 
 //function to reset the index, score, increment attempt and go back to the quiz.
 function retryAction(){
-  localStorage.removeItem('currentIndex');
-  localStorage.removeItem('score');
-  localStorage.removeItem('incorrectAnswers');
+  sessionStorage.removeItem('currentIndex');
+  sessionStorage.removeItem('score');
+  sessionStorage.removeItem('incorrectAnswers');
   attempt++;
-  localStorage.setItem(`attempt`, attempt);
+  sessionStorage.setItem(`attempt`, attempt);
   location.href='quizSide.html';
 }
 //function to display the questions that were answered wrong + the correct answer.
