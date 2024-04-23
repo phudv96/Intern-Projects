@@ -1,60 +1,6 @@
-const quizData = [
-    {
-      question: 'Which year did world war 2 start?',
-      options: ['1945', '1939', '1909', '1911'],
-      answer: '1939',
-    },
-    {
-      question: 'Who is the father of computer science?',
-      options: ['Albert Einstein', 'Bill Gates', 'Alan Turing', 'Hideo Kojima'],
-      answer: 'Alan Turing',
-    },
-    {
-      question: 'Which country won the FIFA World Cup in 2018?',
-      options: ['Brazil', 'Germany', 'France', 'Argentina'],
-      answer: 'France',
-    },
-    {
-      question: 'Which computer language is the newest',
-      options: ['C#', 'C', 'C++', 'JavaScript'],
-      answer: 'C#',
-    },
-    {
-      question: 'Which is the largest ocean on Earth?',
-      options: [
-        'Pacific Ocean',
-        'Indian Ocean',
-        'Atlantic Ocean',
-        'Arctic Ocean',
-      ],
-      answer: 'Pacific Ocean',
-    },
-    {
-      question: 'What is the name of the giant Japanese monster who was born by radiation?',
-      options: null,
-      answer: 'Godzilla',
-    },
-    {
-      question: 'How many bits are in a byte?',
-      options: null,
-      answer: '8',
-    },
-    {
-      question: 'Which planet was demoted to a dwarf-plant in 2006?',
-      options: null,
-      answer: 'Pluto',
-    },
-    {
-      question: 'Which video game has the biggest esport scene in 2023?',
-      options: null,
-      answer: 'League of Legends',
-    },
-    {
-      question: 'Which Greek Demi-god did Disney make a movie about?',
-      options: null,
-      answer: 'Hercules',
-    },
-  ];
+let questionData=[];
+let optionData=[];
+let answerData=[];
 
 const nameSpace = document.getElementById('nameSpace');
 const resultContainer = document.getElementById('result');
@@ -64,23 +10,48 @@ let currentIndex = parseInt(sessionStorage.getItem('currentIndex')) || 0;//using
 let score = parseInt(sessionStorage.getItem('score')) || 0;
 let attempt = parseInt(sessionStorage.getItem('attempt')) || 1;
 let incorrectAnswers = JSON.parse(sessionStorage.getItem('incorrectAnswers')) || [];
-let currentQuestion = currentIndex < quizData.length ? quizData[currentIndex].question : null; //setting defaul data in case index exceed array length
-let currentOption = currentIndex < quizData.length ? quizData[currentIndex].options : null;
-let currentAnswer = currentIndex < quizData.length ? quizData[currentIndex].answer : null;
+let currentQuestion = currentIndex < questionData.length ? questionData[currentIndex] : null; //setting defaul data in case index exceed array length
+let currentOption = currentIndex < optionData.length ? optionData[currentIndex] : null;
+let currentAnswer = currentIndex < answerData.length ? answerData[currentIndex] : null;
 let wrongAnswerIndex=0;
 
 //using conditional +  function to check which html page we're on
 if (window.location.href.includes('quizSide.html')) {
+  (async () =>{await fetchData();
   start();
+})();
 }
 else if(window.location.href.includes('resultSide.html')){
-  displayResult();
+  (async () =>{await fetchData();
+    displayResult();
+  })();
+}
+
+async function fetchData(){//function to fetch data from a json-server and pass it into array
+  try{
+      const response = await fetch(`http://localhost:3000/data`);
+      const data = await response.json();
+      if(!response.ok){
+          throw new Error ("Could not fetch data");
+  }
+      else{
+          for (let i=0; i < data.length; i++){
+          questionData[i]=data[i].question;
+          optionData[i]=data[i].options;
+          answerData[i]=data[i].answer;
+          }
+      }
+  }
+  catch(error){
+      console.error(error);
+  }
 }
 //function to start, prompting user to input their name (won't close unless a name is input)
 function start(){
-    let playerName="Guest";
+    let playerName=sessionStorage.getItem('playerName') || 'Guest';
     while(playerName=="Guest" || playerName==""){
     playerName = window.prompt("Please enter your name");}
+    sessionStorage.setItem('playerName', playerName);
 
     nameSpace.textContent=`${playerName} - Attempt: ${attempt}`;
     nameSpace.style.display="block";
@@ -89,18 +60,18 @@ function start(){
 //check if user has answered all the question, move onto result if no more questions left.
 //checking if the question is multiple choice or input-reliant
 function displayQuestion(){
-  console.log(`Index: ${currentIndex}, Question length: ${quizData.length}`)
-  if (currentIndex >= quizData.length){
+  console.log(`Index: ${currentIndex}, Question length: ${questionData.length}`)
+  if (currentIndex >= questionData.length){
     goResult();
   }
   else {
     optionContainer.innerHTML = '';
     questionContainer.textContent = '';
-    currentQuestion = quizData[currentIndex].question;
-    currentOption = quizData[currentIndex].options;
-    currentAnswer = quizData[currentIndex].answer;
+    currentQuestion = questionData[currentIndex];
+    currentOption = optionData[currentIndex];
+    currentAnswer = answerData[currentIndex];
     questionContainer.textContent=currentQuestion;
-    if ((quizData[currentIndex].options==null)){ //check if multiple choice or open question
+    if ((optionData[currentIndex]==null)){ //check if multiple choice or open question
     generateInput();
     }
     else{
@@ -112,6 +83,7 @@ function displayQuestion(){
 function generateInput(){
   const newOption = document.createElement('input');
   newOption.type='text';  
+  newOption.maxLength='40';
   optionContainer.appendChild(newOption);
 
 }
@@ -141,7 +113,7 @@ function generateOption(){
 function submitAction(){
   const checkedRadio = optionContainer.querySelector('input[type="radio"]:checked');
   const textInput = optionContainer.querySelector('input[type="text"]');
-  if(checkedRadio || textInput){//check if there has been an input
+  if(checkedRadio !== null|| (textInput !== null && textInput.value.trim() !=='')){//check if there has been an input
     const userAnswer = checkedRadio ? checkedRadio.value : textInput.value;
     if (userAnswer.toLowerCase() === currentAnswer.toLowerCase()) {
       if (textInput) {
@@ -178,8 +150,21 @@ function goResult(){
 }
 //function to display question answered + score
 function displayResult(){
-  document.getElementById('score').textContent=`You answered: ${quizData.length-incorrectAnswers.length}/${quizData.length}
+  document.getElementById('score').textContent=`You answered: ${questionData.length-incorrectAnswers.length}/${questionData.length}
                                                 Your score: ${score}`;
+                                                console.log(incorrectAnswers);
+                                                for (let i=0; i<incorrectAnswers.length; i++){
+                                                  const incorrectQuestion = document.createElement('h4');
+                                                  incorrectQuestion.textContent=`${i+1}. ${questionData[incorrectAnswers[i].wrongIndex]}`;
+                                                  const incorrectAnswer = document.createElement('p');
+                                                  incorrectAnswer.textContent=`Your Answer: ${incorrectAnswers[i].wrongAnswer}`;
+                                                  const correctAnswer = document.createElement('p');
+                                                  correctAnswer.textContent=`Correct Answer: ${answerData[incorrectAnswers[i].wrongIndex]}`;
+                                                  resultContainer.appendChild(incorrectQuestion);
+                                                  resultContainer.appendChild(incorrectAnswer);
+                                                  resultContainer.appendChild(correctAnswer);
+                                                }
+                                                
 }
 
 //function to reset the index, score, increment attempt and go back to the quiz.
@@ -193,16 +178,12 @@ function retryAction(){
 }
 //function to display the questions that were answered wrong + the correct answer.
 function showAction(){
-  console.log(incorrectAnswers);
-  for (let i=0; i<incorrectAnswers.length; i++){
-    const incorrectQuestion = document.createElement('h4');
-    incorrectQuestion.textContent=`${i+1}. ${quizData[incorrectAnswers[i].wrongIndex].question}`;
-    const incorrectAnswer = document.createElement('p');
-    incorrectAnswer.textContent=`Your Answer: ${incorrectAnswers[i].wrongAnswer}`;
-    const correctAnswer = document.createElement('p');
-    correctAnswer.textContent=`Correct Answer: ${quizData[incorrectAnswers[i].wrongIndex].answer}`;
-    resultContainer.appendChild(incorrectQuestion);
-    resultContainer.appendChild(incorrectAnswer);
-    resultContainer.appendChild(correctAnswer);
+  if(window.getComputedStyle(resultContainer).display === 'none'){
+    resultContainer.style.display='block';
+    document.getElementById('showAnswer').textContent='Hide Wrong Answer';
+  }
+  else{
+    resultContainer.style.display='none';
+    document.getElementById('showAnswer').textContent='Show Wrong Answer';
   }
 }
