@@ -1,0 +1,12 @@
+{
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  },
+  "name": "toDo-list",
+  "scripts": {
+    "start": "nodemon app.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
