@@ -10,7 +10,7 @@ async function updateTask(){
         taskContainer.innerHTML="";
         tasks.forEach((task)=>{
             // console.log(task._id)
-            appendTask(task.name, task._id)
+            appendTask(task.name, task._id, taskContainer)
         })
     } catch(error){
         console.log(error)
@@ -39,7 +39,7 @@ async function createToDoItem() {
           // Handle error response
         }
       }).then(data=>{
-        appendTask(data.task.name, data.task._id)
+        appendTask(data.task.name, data.task._id, taskContainer)
       })
       .catch(error => {
         console.error('Error sending data:', error);
@@ -47,7 +47,7 @@ async function createToDoItem() {
       });
 }
 
-function appendTask(name, id) {
+function appendTask(name, id, position) {
     const newTask = document.createElement('li');
     const todoItems = `<div title="Hit Double Click and Complete" ondblclick="completedToDoItems(this)">
                         ${name}
@@ -57,50 +57,33 @@ function appendTask(name, id) {
                         <img id="${id}" class="delete todo-controls" onclick="deleteToDoItems(this)" src="/images/trashcan.png" />
                       </div>`;
     newTask.innerHTML = todoItems;
-    taskContainer.appendChild(newTask);
   
     const updateImg = newTask.querySelector('.edit');
-    updateImg.addEventListener('click', function() {
+    updateImg.addEventListener('click',()=>{
       makeListItemEditable(newTask);
     });
+    position.appendChild(newTask);
+    return newTask;
   }
   
   function makeListItemEditable(listItem) {
     const listItemText = listItem.firstChild.innerText;
+    const listItemID = listItem.childNodes[2].childNodes[1].id;
     const inputField = document.createElement('input');
     inputField.value = listItemText;
-    inputField.classList.add('editable-input');
-  
-    inputField.addEventListener('blur', function() {
-      const updatedText = inputField.value;
-      listItem.firstChild.innerText = updatedText;
-      listItem.classList.remove('editing');
-    });
-  
+
     listItem.innerHTML = '';
     listItem.appendChild(inputField);
-    listItem.classList.add('editing');
-    inputField.focus();
+    
+    inputField.addEventListener('keydown', (event)=>{
+      if (event.key === 'Enter') {
+        const updatedText = inputField.value;
+        listItem.innerHTML='';
+        listItem.replaceWith(appendTask(updatedText, listItemID, listItem));
+        
+      }
+    })
   }
-
-// function updateToDoItems(btn) {
-//     const text = btn.innerText;
-//     const inputField = document.createElement('input');
-//     inputField.value = text;
-//     inputField.classList.add('editable-input');
-  
-//     inputField.addEventListener('blur', () => {
-//       const updatedText = inputField.value;
-//       listItem.innerText = updatedText;
-//       listItem.classList.remove('editing');
-//     });
-  
-//     listItem.innerHTML = '';
-//     listItem.appendChild(inputField);
-//     listItem.classList.add('editing');
-//     inputField.focus();
-//   }
-  
 
 async function deleteToDoItems(btn){
         console.log(btn)
