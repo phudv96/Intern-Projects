@@ -2,8 +2,8 @@ const Task = require('../model/Task')
 
 const getAllTasks = async (req,res)=>{
     try{
-        const task = await Task.find({})
-        res.status(200).json({task})
+        const task = await Task.find({})//using mongoose find method to search all entries
+        res.status(200).json({task})//printing out the task at localhost:5000/api/v1/tasks for convinient checking
     } catch (error){
         res.status(500).json({msg: error})
     }
