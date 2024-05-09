@@ -7,6 +7,7 @@ const TaskSchema = new mongoose.Schema({
     trim: true,
     }, 
     completed:Boolean,
+    // default: false,
 })
 
 module.exports = mongoose.model('Task',TaskSchema)

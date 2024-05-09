@@ -85,3 +85,7 @@ h5 {
     padding: 3px;
     margin-right: 5px;
 }
+
+.additional-info {
+    display: none;
+  }
