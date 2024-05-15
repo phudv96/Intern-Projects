@@ -7,6 +7,6 @@ const TaskSchema = new mongoose.Schema({//creating the format for request receiv
     trim: true,
     }, 
     completed:Boolean,
-})
+});
 
-module.exports = mongoose.model('Task',TaskSchema)
+module.exports = mongoose.model('Task',TaskSchema);
