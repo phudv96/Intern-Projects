@@ -1,10 +1,11 @@
 const inputTask = document.getElementById('todoText');
 const taskContainer = document.querySelector('.list-items');
-const hosturl = '127.0.0.1';//can change it to match local ip address
+const hosturl = window.location.hostname; // Get the current hostname
+const port = window.location.port; // Get the current port
 
 async function updateTask(){
     try{
-        const response = await fetch(`http://${hosturl}:5000/api/V1/tasks`)//fetching data from api
+        const response = await fetch(`http://${hosturl}:${port}/api/V1/tasks`)//fetching data from api
         const data = await response.json();
         const tasks = data.data.task;
         taskContainer.innerHTML="";
@@ -78,7 +79,7 @@ async function patchTask(name, id, status){
   };
 
   try {
-    const response = await fetch(`http://${hosturl}:5000/api/V1/tasks/${id}`, {
+    const response = await fetch(`http://${hosturl}:${port}/api/V1/tasks/${id}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json'
@@ -102,7 +103,7 @@ async function createToDoItem() {
           name: inputTask.value,
           completed: false
       }
-      fetch(`http://${hosturl}:5000/api/V1/tasks`,{
+      fetch(`http://${hosturl}:${port}/api/V1/tasks`,{
           method: 'POST',
           headers:{
               'Content-Type': 'application/json'
@@ -123,7 +124,7 @@ async function createToDoItem() {
         });
 }
 async function deleteToDoItems(btn){
-    fetch(`http://${hosturl}:5000/api/V1/tasks/${btn.id}`, {
+    fetch(`http://${hosturl}:${port}/api/V1/tasks/${btn.id}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json'
