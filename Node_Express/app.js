@@ -12,7 +12,7 @@ app.use('/api/v1/tasks', tasks)//specifying the tasks done at this url
 
 const start = async () =>{//connect to MongoDB
     try{
-        await connectDB(process.env.MONGO_URI)//MONGO_URI=mongodb+srv://hiep:Cfvip113@todolist.el6f55x.mongodb.net/
+        await connectDB(process.env.MONGO_URI)
         app.listen(port, ()=>{
             console.log(`Server is listening at port ${port}.....`)
     })
