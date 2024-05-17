@@ -3,9 +3,10 @@ const app = express()
 const tasks = require('./route/task')
 const connectDB = require('./db/connect')
 require('dotenv').config()//importing .env file used to hide password, but I have url below
+const port =process.env.PORT || 5000;
+=======
 var cors = require('cors');
 
-const port = 5000
 
 app.use(cors());
 app.use(express.static('./public'))//using express.static to load up static website file
