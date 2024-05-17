@@ -3,17 +3,18 @@ const taskContainer = document.querySelector('.list-items');
 const hosturl = '127.0.0.1';//can change it to match local ip address
 
 async function updateTask(){
-    try{
-        const response = await fetch(`http://${hosturl}:5000/api/V1/tasks`)//fetching data from api
-        const data = await response.json();
-        const tasks = data.task
-        taskContainer.innerHTML="";
-        tasks.forEach((task)=>{
-            appendTask(task.name, task._id, task.completed, taskContainer)
-        })
-    } catch(error){
-        console.log(error)
-    }
+  try{
+    const response = await fetch(`http://${hosturl}:5000/api/V1/tasks`)//fetching data from api
+    const data = await response.json();
+    const tasks = data.task
+    taskContainer.innerHTML="";
+    tasks.forEach((task)=>{
+      appendTask(task.name, task._id, task.completed, taskContainer)
+    })
+  } 
+  catch(error){
+    console.log(error)
+  }
 }
 
 updateTask()
