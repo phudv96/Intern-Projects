@@ -27,16 +27,16 @@ const getTask = async (req, res)=>{
         if (!task){
             return res.status(404).json({msg:`No task with id: ${taskID}`});
         }
-        res.status(200).json({status: 'success', data: { task }});;
+        res.status(200).json({status: 'success', data: { task }});
     }
     catch(error){
-        res.status(500).json({status: 'error', msg: 'Failed to get task', error: error});
+        res.status(500).json({status: 'error', msg: `Failed to get ${taskID} task`, error: error});
     }
 };
 
 const updateTask = async (req,res)=>{
     try{
-        const {id: taskID} = await req.params;
+        const {id: taskID} = req.params;
         const {name, completed} = req.body;
         const task = await Task.findOneAndUpdate({_id:taskID}, 
                                                 {name: name, completed: completed},
@@ -48,14 +48,14 @@ const updateTask = async (req,res)=>{
         res.status(200).json({status: 'success', data: { task }});
     }
     catch(error){
-        res.status(500).json({status: 'error', msg: 'Failed to get task', error: error});
+        res.status(500).json({status: 'error', msg: 'Failed to update task', error: error});
     }
 };
 
 
 const deleteTask = async (req,res)=>{
     try{
-        const {id: taskID} = await req.params;
+        const {id: taskID} = req.params;
         const task = await Task.findOneAndDelete({_id:taskID});
     
         if (!task){
