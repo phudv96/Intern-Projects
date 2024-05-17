@@ -20,7 +20,7 @@ updateTask()
 
 
 function appendTask(name, id, status, position) {
-  let source = status ? "/images/crossout.png" : "/images/checkbox.png" 
+  let source = status ? "./images/crossout.png" : "./images/checkbox.png" 
   const newTask = document.createElement('li');
   const todoItems = document.createElement('div');
   todoItems.textContent=name;
@@ -28,8 +28,8 @@ function appendTask(name, id, status, position) {
   const todoElements=`
   <div>
   <img id="${id}" class="edit todo-controls" data-status = ${status} src=${source}>
-  <img id="${id}" class="edit todo-controls" src="/images/pencil.png" />
-  <img id="${id}" class="delete todo-controls" onclick="deleteToDoItems(this)" src="/images/trashcan.png" />
+  <img id="${id}" class="edit todo-controls" src="./images/pencil.png" />
+  <img id="${id}" class="delete todo-controls" onclick="deleteToDoItems(this)" src="./images/trashcan.png" />
   </div>`;
     newTask.appendChild(todoItems);
     newTask.innerHTML += todoElements;
