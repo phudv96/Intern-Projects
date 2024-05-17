@@ -12,7 +12,7 @@ async function updateTask(){
       appendTask(task.name, task._id, task.completed, taskContainer)
     })
   } 
-  catch(error){
+  catch(error){ 
     console.log(error)
   }
 }
@@ -32,10 +32,10 @@ function appendTask(name, id, status, position) {
   <img id="${id}" class="edit todo-controls" src="/images/pencil.png" />
   <img id="${id}" class="delete todo-controls" onclick="deleteToDoItems(this)" src="/images/trashcan.png" />
   </div>`;
-    newTask.appendChild(todoItems);
-    newTask.innerHTML += todoElements;
+  newTask.appendChild(todoItems);
+  newTask.innerHTML += todoElements;
   
-    const button = newTask.querySelector('.edit');
+  const button = newTask.querySelector('.edit');
     button.addEventListener('click',(event)=>{
       
       const name = newTask.textContent; 
