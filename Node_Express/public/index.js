@@ -6,7 +6,7 @@ async function updateTask(){
     try{
         const response = await fetch(`http://${hosturl}:5000/api/V1/tasks`)//fetching data from api
         const data = await response.json();
-        const tasks = data.task
+        const tasks = data.data.task;
         taskContainer.innerHTML="";
         tasks.forEach((task)=>{
             appendTask(task.name, task._id, task.completed, taskContainer)
@@ -116,7 +116,7 @@ async function createToDoItem() {
             console.error('Error sending data:', response.status);
           }
         }).then(data=>{
-          appendTask(data.task.name, data.task._id, data.task.completed, taskContainer)
+          appendTask(data.data.task.name, data.data.task._id, data.data.task.completed, taskContainer)
         })
         .catch(error => {
           console.error('Error sending data:', error);
