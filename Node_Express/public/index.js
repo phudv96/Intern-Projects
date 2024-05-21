@@ -5,23 +5,24 @@ const port = window.location.port; // Get the current port
 
 async function updateTask(){
     try{
-        const response = await fetch(`http://${hosturl}:${port}/api/V1/tasks`)//fetching data from api
+        const response = await fetch(`http://${hosturl}:${port}/api/V1/tasks`);//fetching data from api
         const data = await response.json();
         const tasks = data.data.task;
         taskContainer.innerHTML="";
         tasks.forEach((task)=>{
-            appendTask(task.name, task._id, task.completed, taskContainer)
-        })
-    } catch(error){
-        console.log(error)
+            appendTask(task.name, task._id, task.completed, taskContainer);
+        });
+    } 
+    catch(error){
+        console.log(error);
     }
 }
 
-updateTask()
+updateTask();
 
 
 function appendTask(name, id, status, position) {
-  let source = status ? "/images/crossout.png" : "/images/checkbox.png" 
+  let source = status ? "/images/crossout.png" : "/images/checkbox.png" ;
   const newTask = document.createElement('li');
   const todoItems = document.createElement('div');
   todoItems.textContent=name;
@@ -32,44 +33,41 @@ function appendTask(name, id, status, position) {
   <img id="${id}" class="edit todo-controls" src="/images/pencil.png" />
   <img id="${id}" class="delete todo-controls" onclick="deleteToDoItems(this)" src="/images/trashcan.png" />
   </div>`;
-    newTask.appendChild(todoItems);
-    newTask.innerHTML += todoElements;
-  
-    const button = newTask.querySelector('.edit');
-    button.addEventListener('click',(event)=>{
-      
-      const name = newTask.textContent; 
-      const id = event.target.id; 
-      const currentStatus = event.target.dataset.status;
-      const newStatus = currentStatus === 'true' ? 'false' : 'true';
-      event.target.dataset.status = newStatus;
-      patchTask(name, id, newStatus);
-    });
+  newTask.appendChild(todoItems);
+  newTask.innerHTML += todoElements;
+  const button = newTask.querySelector('.edit');
+  button.addEventListener('click',(event)=>{
+    const name = newTask.textContent; 
+    const id = event.target.id; 
+    const currentStatus = event.target.dataset.status;
+    const newStatus = currentStatus === 'true' ? 'false' : 'true';
+    event.target.dataset.status = newStatus;
+    patchTask(name, id, newStatus);
+  });
     
-    const updateImg = newTask.querySelectorAll('.edit')[1];
-    updateImg.addEventListener('click',()=>{
-      makeListItemEditable(newTask);
-    });
-    position.appendChild(newTask);
-    return newTask;
+  const updateImg = newTask.querySelectorAll('.edit')[1];
+  updateImg.addEventListener('click',()=>{
+    makeListItemEditable(newTask);
+  });
+  position.appendChild(newTask);
+  return newTask;
 }
 function makeListItemEditable(listItem) {
-    const listItemText = listItem.firstChild.innerText;
-    const listItemID = listItem.childNodes[2].childNodes[1].id;
-    const inputField = document.createElement('input');
-    inputField.value = listItemText;
-    
-    listItem.innerHTML = '';
-    listItem.appendChild(inputField);
-    
-    inputField.addEventListener('keydown', (event)=>{
-      if (event.key === 'Enter') {
-        const updatedText = inputField.value;
-        listItem.innerHTML='';
-        listItem.replaceWith(appendTask(updatedText, listItemID, false,listItem));
-        patchTask(updatedText, listItemID);
-      }
-    })
+  const listItemText = listItem.firstChild.innerText;
+  const listItemID = listItem.childNodes[2].childNodes[1].id;
+  const inputField = document.createElement('input');
+  inputField.value = listItemText;
+  listItem.innerHTML = '';
+  listItem.appendChild(inputField);
+
+  inputField.addEventListener('keydown', (event)=>{
+    if (event.key === 'Enter') {
+      const updatedText = inputField.value;
+      listItem.innerHTML='';
+      listItem.replaceWith(appendTask(updatedText, listItemID, false,listItem));
+      patchTask(updatedText, listItemID);
+    }
+  });
 }
 
 async function patchTask(name, id, status){
@@ -89,11 +87,13 @@ async function patchTask(name, id, status){
 
     if (response.ok) {
       console.log('Data updated successfully!');
-      updateTask()
-    } else {
+      updateTask();
+    } 
+    else {
       console.error('Error updating data:', response.status);
     }
-  } catch (error) {
+  } 
+  catch (error) {
     console.error('Error updating data:', error);
   }
 }
@@ -113,7 +113,8 @@ async function createToDoItem() {
           if (response.ok) {
             console.log('Data sent successfully!');
             return response.json();
-          } else {
+          } 
+          else {
             console.error('Error sending data:', response.status);
           }
         }).then(data=>{
@@ -133,7 +134,8 @@ async function deleteToDoItems(btn){
   .then(response => {
     if (response.ok) {
       updateTask()
-    } else {
+    } 
+    else {
       throw new Error('Error: ' + response.status);
     }
   })
@@ -146,7 +148,7 @@ listenForEvents();
 function listenForEvents() {
   const enterImage = document.querySelector('img[src="./images/plus.png"]');
   enterImage.addEventListener('click', createToDoItem);
-  const textBox = document.getElementById('todoText')
+  const textBox = document.getElementById('todoText');
   textBox.addEventListener('keydown', function(event) {
     if (event.key === 'Enter') {
       createToDoItem();
