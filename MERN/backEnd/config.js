@@ -1,3 +1,3 @@
 export const PORT = 5555;
 
-export const mongoDB = 'mongodb+srv://phunghoanghiep:<password>@database.euqzmdv.mongodb.net/?retryWrites=true&w=majority&appName=DataBase';
+export const mongoDBURL ='mongodb+srv://phunghoanghiep:cfvip113@database.euqzmdv.mongodb.net/'
