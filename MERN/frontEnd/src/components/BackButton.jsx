@@ -1,5 +1,6 @@
+//renders a button with a back arrow icon to navigate to a destination
 import { Link } from 'react-router-dom';
-import { BsArrowLeft } from 'react-icons/bs';
+import { BsArrowLeft } from 'react-icons/bs'; //importing arrow icon from react-icons lib
 
 const BackButton = ({ destination = '/' }) => {
   return (
