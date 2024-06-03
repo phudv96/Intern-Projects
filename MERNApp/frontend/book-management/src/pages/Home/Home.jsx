@@ -1,9 +1,11 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import Navbar from '../../components/Navbar/Navbar';
 import NoteCard from '../../components/Cards/NoteCard';
 import {MdAdd} from 'react-icons/md';
 import AddEditNotes from './AddEditNotes';
 import Modal from 'react-modal';
+import {useNavigate} from 'react-router-dom';
+import axiosInstance from '../../utils/axiosInstance';
 
 const Home = () => {
 
@@ -13,22 +15,68 @@ const Home = () => {
     data: null,
   });
 
+  const [userInfo, setUserInfo] = useState(null);
+  const [allBooks, setAllBooks] = useState([]);
+
+  const navigate = useNavigate();
+
+  const handleEdit = (bookDetails) => {
+    setOpenAddEditModal({isShown: true, data: bookDetails, type: "edit"});
+  };
+
+  //get user info
+
+  const getUserInfo = async() => {
+    try{
+      const response = await axiosInstance.get("/get-user");
+      if(response.data && response.data.user){
+        setUserInfo(response.data.user);
+      }
+    }catch(error){
+      if(error.response.status === 401){
+        localStorage.clear();
+        navigate("login");
+      }
+    }
+  };
+
+  const getAllBooks = async () => {
+    try{
+      const response = await axiosInstance.get("/get-all-books");
+
+      if(response.data && response.data.books){
+        setAllBooks(response.data.books);
+      }
+    } catch(error){
+      console.log("An unexpected error occurred. Please try again");
+    }
+  }
+
+  useEffect(() => {
+    getAllBooks();
+    getUserInfo();
+    return()=>{};
+  }, []);
+
   return (
     <>
-    <Navbar />
+    <Navbar userInfo={userInfo} />
 
     <div className='container mx-auto'>
       <div className='grid grid-cols-1 gap-4 mt-8'>
-        <NoteCard
-          title="Sample Note"
-          date="2023-05-30"
-          content="This is the content of the note."
-          tags={['tag1', 'tag2']}
-          isPinned={false}
-          onEdit={() => {}}
-          onDelete={() => {}}
-          onPinNote={() => {}}
-        />
+        {allBooks.map((item, index) => (
+          <NoteCard
+            key={item._id}
+            title={item.title}
+            date=""
+            content={item.content}
+            tags={item.tags}
+            isPinned={item.isPinned}
+            onEdit={() => handleEdit(item)}
+            onDelete={() => {}}
+            onPinNote={() => {}}
+          />          
+        ))};
       </div>
     </div>
     
@@ -53,8 +101,9 @@ const Home = () => {
     >
       <AddEditNotes
         type={openAddEditModal.type}
-        noteData={openAddEditModal.data}
+        bookData={openAddEditModal.data}
         onClose={()=>{setOpenAddEditModal({isShown: false, type: "add", data: null});}}
+        getAllBooks={getAllBooks}
       />
     </Modal>
     </>

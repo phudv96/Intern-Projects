@@ -5,10 +5,8 @@ const mongoose = require("mongoose");
 
 mongoose.connect(config.connectionString);
 
-
 const User = require('./model/userModel');
 const Book = require('./model/bookModel');
-
 const express = require ("express");
 const cors = require ("cors");
 const app = express();
@@ -125,7 +123,7 @@ app.get("/get-user", authenticateToken, async (req,res)=>{
     }
 
     return res.json({
-        user: {fullname: isUser.fullName, email: isUser.email, "_id": isUser._id, createdOn: isUser.createdOn},
+        user: {fullName: isUser.fullName, email: isUser.email, "_id": isUser._id, createdOn: isUser.createdOn},
         message: "",
     });
 
