@@ -3,21 +3,26 @@ import TagInput from '../../components/Input/TagInput';
 import {MdClose} from 'react-icons/md'
 import axiosInstance from '../../utils/axiosInstance';
 
-const AddEditNotes = ({bookData, type, getAllBooks, onClose}) => {
+const AddEditNotes = ({bookData, type, getAllBooks, onClose, showToastMessage}) => {
 
     const [title, setTitle] = useState(bookData?.title||"");
     const [content, setContent] = useState(bookData?.content||"");
+    const [publishedYear, setPublishedYear] = useState(bookData?.publishedYear||"");
+    const [author, setAuthor] = useState(bookData?.author||"");
     const [tags, setTags] = useState(bookData?.tags||[]);
     const [error, setError] = useState(null);
 //Add New Book
     const addNewNote = async () => {
       try{
-        const response = await axiosInstance.put("/add-book",{
+        const response = await axiosInstance.post("/add-book",{
           title,
           content,
           tags,
+          author,
+          publishedYear,
         });
         if (response.data && response.data.book){
+          showToastMessage("Book Added Successfully");
           getAllBooks();
           onClose();
         }
@@ -35,8 +40,11 @@ const AddEditNotes = ({bookData, type, getAllBooks, onClose}) => {
           title,
           content,
           tags,
+          author,
+          publishedYear,
         });
         if (response.data && response.data.book){
+          showToastMessage("Book Updated Successfully");
           getAllBooks();
           onClose();
         }
@@ -55,6 +63,14 @@ const AddEditNotes = ({bookData, type, getAllBooks, onClose}) => {
         if (!content){
             setError("Please enter the content");
             return;
+        }
+        if (!author) {
+          setError("Please enter the name of the author");
+          return;
+        }
+        if (!publishedYear) {
+          setError("Please enter published year");
+          return;
         }
         if (tags.length===0){
             setError("Please enter the genre");
@@ -87,6 +103,7 @@ const AddEditNotes = ({bookData, type, getAllBooks, onClose}) => {
         onChange={({target})=>setTitle(target.value)}
         />
       </div>
+
       <div className='flex flex-col gap-2 mt-4'>
         <label className='input-label'>CONTENT</label>
         <textarea 
@@ -96,6 +113,30 @@ const AddEditNotes = ({bookData, type, getAllBooks, onClose}) => {
         row={10}
         value={content}
         onChange={({target})=>setContent(target.value)}
+        />
+      </div>
+
+      <div className='flex flex-col gap-2 mt-4'>
+        <label className='input-label'>AUTHOR</label>
+        <textarea 
+        type='text'
+        className='text-sm text-slate-950 outline-none bg-slate-50 p-2 rounded'
+        placeholder='Who wrote the book'
+        row={10}
+        value={author}
+        onChange={({target})=>setAuthor(target.value)}
+        />
+      </div>
+
+      <div className='flex flex-col gap-2 mt-4'>
+        <label className='input-label'>PUBLISHED YEAR</label>
+        <textarea 
+        type='number'
+        className='text-sm text-slate-950 outline-none bg-slate-50 p-2 rounded'
+        placeholder='When was the book published'
+        row={10}
+        value={publishedYear}
+        onChange={({target})=>setPublishedYear(target.value)}
         />
       </div>
 

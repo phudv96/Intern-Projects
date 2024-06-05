@@ -130,7 +130,7 @@ app.get("/get-user", authenticateToken, async (req,res)=>{
 })
 //Add Book
 app.post("/add-book", authenticateToken, async(req, res)=>{
-    const {title, content, tags} = req.body;
+    const {title, content, tags, author, publishedYear} = req.body;
     const {user} = req.user;
 
     if (!title){
@@ -148,6 +148,8 @@ app.post("/add-book", authenticateToken, async(req, res)=>{
             title,
             content,
             tags: tags || [],
+            author,
+            publishedYear,
             userId: user._id,
         });
 
@@ -168,7 +170,7 @@ app.post("/add-book", authenticateToken, async(req, res)=>{
 //Edit Book
 app.put("/edit-book/:bookId", authenticateToken, async(req, res)=>{
     const bookId=req.params.bookId;
-    const {title, content, tags, isPinned} = req.body;
+    const {title, content, tags, author, publishedYear, isPinned} = req.body;
     const {user} = req.user;
 
     if(!title && !content && !tags){
@@ -187,6 +189,8 @@ app.put("/edit-book/:bookId", authenticateToken, async(req, res)=>{
         if(title) book.title = title;
         if(content) book.content = content;
         if(tags) book.tags =tags;
+        if(author) book.author =author;
+        if(publishedYear) book.publishedYear =publishedYear;
         if(isPinned) book.isPinned = isPinned;
 
         await book.save();
@@ -276,6 +280,36 @@ app.put("/update-pin/:bookId", authenticateToken, async(req,res)=>{
         return res.status(500).json({
             error: true,
             message: "Internal Server Error When Updating Pin",
+        });
+    }
+});
+//search API
+app.get("/search-books/", authenticateToken, async(req,res)=>{
+    const { user } = req.user;
+    const { query } = req.query;
+
+    if(!query){
+        return res.status(400).json({error: true, message: "Search query is required"});
+    }
+
+    try{
+        const matchingBooks = await Book.find({
+            userId: user._id,
+            $or: [
+                {title: {$regex: new RegExp(query, "i")}},
+                {content:{$regex: new RegExp(query, "i")}},
+            ]
+        });
+
+        return res.json({
+            error: false,
+            books: matchingBooks,
+            message: "Books matching the search query retrieved successfully",
+        });
+    }catch(error){
+        return res.status(500).json({
+            error: true,
+            message: "Internal Server Error",       
         });
     }
 });

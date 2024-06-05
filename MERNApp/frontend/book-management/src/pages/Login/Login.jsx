@@ -34,10 +34,11 @@ const Login = () => {
       email: email,
       password: password,
     });
+
     //Handle successful login
     if(response.data && response.data.accessToken){
-      localStorage.setItem("token", response.data.accessToken)
-      navigate('/dashboard')
+      localStorage.setItem("token", response.data.accessToken);
+      navigate('/dashboard');
     }
   } catch(error){
     //Handle Login Error
