@@ -14,6 +14,7 @@ const SearchBar = ({value, onChange, handleSearch, onClearSearch}) => {
   const handleOptionSelect = (option) => {
     setSelectedOption(option);
     setIsDropdownOpen(false);
+    handleSearch(option);
   };
 
 
@@ -49,9 +50,9 @@ const SearchBar = ({value, onChange, handleSearch, onClearSearch}) => {
           </div>
           <div
             className='px-4 py-2 hover:bg-slate-100 cursor-pointer'
-            onClick={() => handleOptionSelect('year')}
+            onClick={() => handleOptionSelect('tags')}
           >
-            Year
+            Tag
           </div>
         </div>
       )}
@@ -59,7 +60,7 @@ const SearchBar = ({value, onChange, handleSearch, onClearSearch}) => {
 
         <IoMdClose className='text-xl text-slate-500 cursor-pointer hover:text-black mr-3' onClick={onClearSearch} />
 
-        <FaMagnifyingGlass className='text-slate-400 cursor-pointer hover:text-black' onClick={handleSearch} />
+        <FaMagnifyingGlass className='text-slate-400 cursor-pointer hover:text-black' onClick={() => handleSearch(selectedOption)} />
 
     </div>
   )

@@ -7,7 +7,6 @@ import Modal from 'react-modal';
 import {useNavigate} from 'react-router-dom';
 import axiosInstance from '../../utils/axiosInstance';
 import Toast from '../../components/ToastMessage/Toast';
-import noResult from '../../../public/noRecord.png';
 
 const Home = () => {
 
@@ -99,12 +98,19 @@ const Home = () => {
   }
 
   //Search for a book
-  const onSearchBook = async (query) => {
+  const onSearchBook = async (query, option) => {
     try{
+      const params ={
+        query,
+      };
+      console.log("Request params:", params);
+
       const response = await axiosInstance.get("/search-books", {
-        params: {query},
+        params:{
+          query,
+          option,
+        },
       });
-      
       if (response.data && response.data.books){
         setIsSearch(true);
         setAllBooks(response.data.books);
@@ -115,6 +121,23 @@ const Home = () => {
   }
 
   const updateIsPinned = async (bookData) =>{
+    const bookId = bookData._id;
+      try{
+        const response = await axiosInstance.put("/update-pin/" + bookId,{
+          isPinned: !bookData.isPinned,
+        });
+        if (response.data && response.data.book){
+          if (!bookData.isPinned) {
+            showToastMessage("Bookmarked");
+          } else {
+            showToastMessage("Bookmark Removed");
+          }
+    
+          getAllBooks();
+        }
+      }catch(error){
+          console.log(error);
+      }
   };
 
   useEffect(() => {
@@ -140,7 +163,7 @@ const Home = () => {
             isPinned={item.isPinned}
             onEdit={() => handleEdit(item)}
             onDelete={() => deleteBook(item)}
-            onPinNote={() => {}}
+            onPinNote={() => updateIsPinned(item)}
           />          
         ))};
       </div>

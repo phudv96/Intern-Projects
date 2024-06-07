@@ -11,9 +11,9 @@ const NavBar = ({userInfo, onSearchBook, handleClearSearch}) => {
     navigate("/login");
   };
 
-  const handleSearch = () => {
+  const handleSearch = (option) => {
     if(searchQuery){
-      onSearchBook(searchQuery)
+      onSearchBook(searchQuery, option)
     }
   };
 

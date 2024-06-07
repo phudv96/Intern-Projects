@@ -254,12 +254,6 @@ app.put("/update-pin/:bookId", authenticateToken, async(req,res)=>{
     const {isPinned} = req.body;
     const {user} = req.user;
 
-    // if(!title && !content && !tags){
-    //     return res
-    //     .status(400)
-    //     .json({error: true, message: "No changes provided"});
-    // }
-
     try{
         const book = await Book.findOne({_id: bookId, userId: user._id});
 
@@ -267,7 +261,10 @@ app.put("/update-pin/:bookId", authenticateToken, async(req,res)=>{
             return res.status(404).json({error: true, message: "Book not found"});
         }
 
-        if(isPinned) book.isPinned = isPinned||false;
+        if(isPinned) {
+        book.isPinned = true;} else {
+            book.isPinned = false;
+        }
 
         await book.save();
 
@@ -286,20 +283,40 @@ app.put("/update-pin/:bookId", authenticateToken, async(req,res)=>{
 //search API
 app.get("/search-books/", authenticateToken, async(req,res)=>{
     const { user } = req.user;
-    const { query } = req.query;
+    const { query, option } = req.query;
 
     if(!query){
         return res.status(400).json({error: true, message: "Search query is required"});
     }
 
-    try{
-        const matchingBooks = await Book.find({
-            userId: user._id,
-            $or: [
-                {title: {$regex: new RegExp(query, "i")}},
-                {content:{$regex: new RegExp(query, "i")}},
-            ]
-        });
+    try {
+        let matchingBooks;
+        switch (option) {
+            case "title":
+                matchingBooks = await Book.find({
+                userId: user._id,
+                title: { $regex: new RegExp(query, "i") },
+                });
+                break;
+            case "author":
+                matchingBooks = await Book.find({
+                userId: user._id,
+                author: { $regex: new RegExp(query, "i") },
+                });
+                break;
+            case "tags":
+                matchingBooks = await Book.find({
+                  userId: user._id,
+                  tags: { $regex: new RegExp(query, "i") },
+
+                });
+            break;
+          default:
+            return res.status(400).json({
+              error: true,
+              message: "Invalid search option",
+            });
+        }
 
         return res.json({
             error: false,
