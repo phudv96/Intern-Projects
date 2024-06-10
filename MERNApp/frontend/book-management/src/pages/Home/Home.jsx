@@ -1,8 +1,8 @@
 import React, {useState, useEffect} from 'react';
 import Navbar from '../../components/Navbar/Navbar';
-import NoteCard from '../../components/Cards/NoteCard';
+import BookCard from '../../components/Cards/BookCard';
 import {MdAdd} from 'react-icons/md';
-import AddEditNotes from './AddEditNotes';
+import AddEditNotes from './AddEditBooks';
 import Modal from 'react-modal';
 import {useNavigate} from 'react-router-dom';
 import axiosInstance from '../../utils/axiosInstance';
@@ -63,7 +63,8 @@ const Home = () => {
     }catch(error){
       if(error.response.status === 401){
         localStorage.clear();
-        navigate("login");
+        console.log("please log in");
+        navigate("/login");
       }
     }
   };
@@ -83,7 +84,6 @@ const Home = () => {
   //Delete a book
   const deleteBook = async(data) => {
     const bookId = data._id;
-    console.log(`button is clicked: ${bookId}`);
     try{
       const response = await axiosInstance.delete("/delete-book/" + bookId);
       if (response.data && !response.data.error){
@@ -100,9 +100,9 @@ const Home = () => {
   //Search for a book
   const onSearchBook = async (query, option) => {
     try{
-      const params ={
-        query,
-      };
+      // const params ={
+      //   query
+      // };
       // console.log("Request params:", params);
 
       const response = await axiosInstance.get("/search-books", {
@@ -112,6 +112,7 @@ const Home = () => {
         },
       });
       if (response.data && response.data.books){
+        console.log(response);
         setIsSearch(true);
         setAllBooks(response.data.books);
       }
@@ -146,7 +147,7 @@ const Home = () => {
         {allBooks.map((item, index) => {
           let isPinned = userInfo.pinnedBooks.includes(item._id);
           return (
-          <NoteCard
+          <BookCard
             key={item._id}
             title={item.title}
             publishedYear={item.publishedYear}

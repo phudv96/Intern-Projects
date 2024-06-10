@@ -72,8 +72,9 @@ app.post("/create-account", async (req,res)=>{
 
     await user.save();
 
+    // Generate an access token
     const accessToken = jwt.sign({user}
-        , process.env.ACCESS_TOKEN_SECRET
+        , process.env.ACCESS_TOKEN_SECRET //// The secret key used to sign the token
         , {expiresIn: "3600m", 
     });
 
@@ -185,7 +186,7 @@ app.post("/add-book", authenticateToken, async (req, res) => {
 app.put("/edit-book/:bookId", authenticateToken, async(req, res)=>{
     const bookId=req.params.bookId;
     const {title, content, tags, author, publishedYear, imageUrl} = req.body;
-    const {user} = req.user;
+    // const {user} = req.user;
 
     if(!title && !content && !tags){
         return res
@@ -194,7 +195,7 @@ app.put("/edit-book/:bookId", authenticateToken, async(req, res)=>{
     }
 
     try{
-        const book = await Book.findOne({_id: bookId, userId: user._id});
+        const book = await Book.findOne({_id: bookId});
 
         if(!book){
             return res.status(404).json({error: true, message: "Book not found"});
@@ -266,15 +267,15 @@ app.get("/get-all-books", authenticateToken, async (req, res) => {
 //Delete All Book
 app.delete("/delete-book/:bookId", authenticateToken, async(req, res)=>{
     const bookId=req.params.bookId;
-    const {user} = req.user;
+    // const {user} = req.user;
 
     try{
-        const book = await Book.findOne({_id: bookId, userId: user._id});
+        const book = await Book.findOne({_id: bookId});
 
         if(!book){
             return res.status(400).json({error: true, message: "Book not found"});
         }
-        await Book.deleteOne({_id: bookId, userId: user._id});
+        await Book.deleteOne({_id: bookId});
 
         return res.json({
             error: false,
@@ -324,7 +325,6 @@ app.put("/update-pin/:bookId", authenticateToken, async (req, res) => {
   });
 //search API
 app.get("/search-books/", authenticateToken, async(req,res)=>{
-    const { user } = req.user;
     const { query, option } = req.query;
 
     if(!query){
@@ -336,19 +336,16 @@ app.get("/search-books/", authenticateToken, async(req,res)=>{
         switch (option) {
             case "title":
                 matchingBooks = await Book.find({
-                userId: user._id,
-                title: { $regex: new RegExp(query, "i") },
+                title: { $regex: new RegExp(query, "i") },//search using regular expression, case insensitive
                 });
                 break;
             case "author":
                 matchingBooks = await Book.find({
-                userId: user._id,
                 author: { $regex: new RegExp(query, "i") },
                 });
                 break;
             case "tags":
                 matchingBooks = await Book.find({
-                  userId: user._id,
                   tags: { $regex: new RegExp(query, "i") },
 
                 });
@@ -363,7 +360,7 @@ app.get("/search-books/", authenticateToken, async(req,res)=>{
         return res.json({
             error: false,
             books: matchingBooks,
-            message: "Books matching the search query retrieved successfully",
+            message: `Books matching the search query retrieved successfully. Query: ${query}  Option: ${option}`,
         });
     }catch(error){
         return res.status(500).json({
@@ -372,6 +369,8 @@ app.get("/search-books/", authenticateToken, async(req,res)=>{
         });
     }
 });
-app.listen(8000);
+app.listen(8000, ()=>{
+  console.log("Server is running on port 8000");
+});
 
 module.exports = app;
