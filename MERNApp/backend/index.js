@@ -301,10 +301,8 @@ app.put("/update-pin/:bookId", authenticateToken, async (req, res) => {
         const bookIndex = userPin.pinnedBooks.indexOf(bookId);
 
         userPin.pinnedBooks.splice(bookIndex, 1);//removing using splice 
-        console.log("Book already inside the array");
         } else {
             userPin.pinnedBooks.push(bookId);//adding using push
-        console.log("Book not inside the array");
       }
 
       await userPin.save();

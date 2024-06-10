@@ -3,7 +3,6 @@ import Navbar from '../../components/Navbar/Navbar';
 import {Link, useNavigate} from 'react-router-dom';
 import PasswordInput from '../../components/Input/PasswordInput';
 import { validateEmail } from '../../utils/helper';
-import axios from 'axios';
 import axiosInstance from '../../utils/axiosInstance';
 
 const Login = () => {
