@@ -25,7 +25,8 @@ const Home = () => {
   const [userInfo, setUserInfo] = useState(null);
   const [allBooks, setAllBooks] = useState([]);
   const [isSearch, setIsSearch] = useState(false);
-
+  const [isPinned, setIsPinned] = useState(false);
+  
   const navigate = useNavigate();
 
   const handleEdit = (bookDetails) => {
@@ -104,7 +105,7 @@ const Home = () => {
       const params ={
         query,
       };
-      console.log("Request params:", params);
+      // console.log("Request params:", params);
 
       const response = await axiosInstance.get("/search-books", {
         params:{
@@ -121,24 +122,15 @@ const Home = () => {
     }
   }
 
-  const updateIsPinned = async (bookData) =>{
+  const updateIsPinned = async (bookData) => {
     const bookId = bookData._id;
-      try{
-        const response = await axiosInstance.put("/update-pin/" + bookId,{
-          isPinned: !bookData.isPinned,
-        });
-        if (response.data && response.data.book){
-          if (!bookData.isPinned) {
-            showToastMessage("Bookmarked");
-          } else {
-            showToastMessage("Bookmark Removed");
-          }
-    
-          getAllBooks();
-        }
-      }catch(error){
-          console.log(error);
-      }
+    try {
+      const response = await axiosInstance.put(`/update-pin/${bookId}`);
+      console.log(response.data);
+      getAllBooks();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -153,7 +145,9 @@ const Home = () => {
 
     <div className='container mx-auto'>
       <div className='grid grid-cols-3 gap-4 mt-8'>
-        {allBooks.map((item, index) => (
+        {allBooks.map((item, index) => {
+          let isPinned = userInfo.pinnedBooks.includes(item._id);
+          return (
           <NoteCard
             key={item._id}
             title={item.title}
@@ -161,12 +155,12 @@ const Home = () => {
             author={item.author}
             content={item.content}
             tags={item.tags}
-            isPinned={item.isPinned}
+            isPinned={isPinned}
             onEdit={() => handleEdit(item)}
             onDelete={() => deleteBook(item)}
             onPinNote={() => updateIsPinned(item)}
           />          
-        ))};
+        )})};
       </div>
     </div>
     

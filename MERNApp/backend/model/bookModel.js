@@ -8,7 +8,7 @@ const bookSchema = new Schema({
     tags:{type: [String], default: []},
     author: { type: String, required: true },
     publishedYear: { type: Number, required: true },
-    isPinned: {type: Boolean, default: false},
+    // isPinned: {type: Boolean, default: false},
     userId: {type: String, required: true},
     createdOn: {type: Date, default: new Date().getTime()},
 });

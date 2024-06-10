@@ -137,8 +137,9 @@ app.get("/get-user", authenticateToken, async (req,res)=>{
             email: isUser.email, 
             "_id": isUser._id, 
             role: isUser.role,
+            pinnedBooks: isUser.pinnedBooks,
             createdOn: isUser.createdOn},
-        message: "",
+            message: "",
     });
 
 })
@@ -184,7 +185,7 @@ app.post("/add-book", authenticateToken, async(req, res)=>{
 //Edit Book
 app.put("/edit-book/:bookId", authenticateToken, async(req, res)=>{
     const bookId=req.params.bookId;
-    const {title, content, tags, author, publishedYear, isPinned} = req.body;
+    const {title, content, tags, author, publishedYear} = req.body;
     const {user} = req.user;
 
     if(!title && !content && !tags){
@@ -205,7 +206,7 @@ app.put("/edit-book/:bookId", authenticateToken, async(req, res)=>{
         if(tags) book.tags =tags;
         if(author) book.author =author;
         if(publishedYear) book.publishedYear =publishedYear;
-        if(isPinned) book.isPinned = isPinned;
+        // if(isPinned) book.isPinned = isPinned;
 
         await book.save();
         
@@ -228,22 +229,41 @@ async function getUserIdsByRole(role) {
   }
   
 //Get All Book
-app.get("/get-all-books", authenticateToken, async(req, res)=>{
-    const {user} = req.user;
-    try{
-        const books = await Book.find({ userId: { $in: await getUserIdsByRole("admin") } }).sort({isPinned: -1});//retrieve all books added by admin
-        return res.json({
-            error: false,
-            books,
-            message: "All books retrieved successfully",
-        });
-    }catch(error){
-        return res.status(500).json({
-            error: true,
-            message: "Internal Server Error When Retrieve All Book"
-        })
+app.get("/get-all-books", authenticateToken, async (req, res) => {
+    const { user } = req.user;
+  
+    try {
+      // Retrieve all books added by admin
+      const allBooks = await Book.find();
+  
+      // Get the user's pinned books
+      const userPin = await User.findOne({ _id: user._id });
+      const pinnedBookIds = userPin.pinnedBooks;
+  
+      // Sort the books, putting the pinned books first
+      const sortedBooks = allBooks.map((book) => {
+        const isPinned = pinnedBookIds.includes(book._id.toString());
+        return {
+          ...book.toObject(),
+          isPinned,
+        };
+      }).sort((a, b) => {
+        // Sort by the 'isPinned' property, with pinned books first
+        return b.isPinned - a.isPinned;
+      });
+  
+      return res.json({
+        error: false,
+        books: sortedBooks,
+        message: "All books retrieved successfully",
+      });
+    } catch (error) {
+      return res.status(500).json({
+        error: true,
+        message: "Internal Server Error When Retrieving All Books",
+      });
     }
-});
+  });
 //Delete All Book
 app.delete("/delete-book/:bookId", authenticateToken, async(req, res)=>{
     const bookId=req.params.bookId;
@@ -269,37 +289,40 @@ app.delete("/delete-book/:bookId", authenticateToken, async(req, res)=>{
     }
 });
 //update Pin status
-app.put("/update-pin/:bookId", authenticateToken, async(req,res)=>{
+app.put("/update-pin/:bookId", authenticateToken, async (req, res) => {
     const bookId = req.params.bookId;
-    const {isPinned} = req.body;
-    const {user} = req.user;
+    const { user } = req.user;
 
-    try{
-        const book = await Book.findOne({_id: bookId, userId: user._id});
+    const userPin = await User.findOne({_id: user._id});
+  
+    try {
+      // Update the user's pinnedBooks array
+      if (userPin.pinnedBooks.includes(bookId)) { //check if book is in the pinnedBook already
+        const bookIndex = userPin.pinnedBooks.indexOf(bookId);
 
-        if(!book){
-            return res.status(404).json({error: true, message: "Book not found"});
-        }
+        userPin.pinnedBooks.splice(bookIndex, 1);//removing using splice 
+        console.log("Book already inside the array");
+        } else {
+            userPin.pinnedBooks.push(bookId);//adding using push
+        console.log("Book not inside the array");
+      }
 
-        if(isPinned) {
-        book.isPinned = true;} else {
-            book.isPinned = false;
-        }
+      await userPin.save();
 
-        await book.save();
-
-        return res.json({
-            error: false,
-            book,
-            message: "Pin updated successfully",
-        });
-    } catch (error){
-        return res.status(500).json({
-            error: true,
-            message: "Internal Server Error When Updating Pin",
-        });
+      console.log("saved");
+  
+      return res.json({
+        error: false,
+        pinnedBooks: userPin.pinnedBooks,
+        message: "Pin updated successfully",
+      });
+    } catch (error) {
+      return res.status(500).json({
+        error: true,
+        message: "Internal Server Error When Updating Pin",
+      });
     }
-});
+  });
 //search API
 app.get("/search-books/", authenticateToken, async(req,res)=>{
     const { user } = req.user;
