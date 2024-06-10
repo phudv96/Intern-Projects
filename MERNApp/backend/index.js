@@ -28,7 +28,7 @@ app.get("/",(req,res)=>{
 
 //Create Account
 app.post("/create-account", async (req,res)=>{
-    const {fullName, email, password} = req.body;
+    const {fullName, email, password, role} = req.body;
 
     if(!fullName){
         return res
@@ -46,6 +46,13 @@ app.post("/create-account", async (req,res)=>{
         .json({error: true, message: "Password is required"});
     }
 
+    if(!role){
+        return res
+        .status(400)
+        .json({error: true, message: "Role is required"});
+    }
+
+
     const isUser = await User.findOne({ email: email});
 
     if(isUser){
@@ -59,6 +66,8 @@ app.post("/create-account", async (req,res)=>{
         fullName,
         email,
         password,
+        role,
+        pinnedBooks: [],
     });
 
     await user.save();
@@ -123,7 +132,12 @@ app.get("/get-user", authenticateToken, async (req,res)=>{
     }
 
     return res.json({
-        user: {fullName: isUser.fullName, email: isUser.email, "_id": isUser._id, createdOn: isUser.createdOn},
+        user: {
+            fullName: isUser.fullName, 
+            email: isUser.email, 
+            "_id": isUser._id, 
+            role: isUser.role,
+            createdOn: isUser.createdOn},
         message: "",
     });
 
@@ -207,11 +221,17 @@ app.put("/edit-book/:bookId", authenticateToken, async(req, res)=>{
         });
     }
 });
+//Helper function to fetch user by role
+async function getUserIdsByRole(role) {
+    const users = await User.find({ role }, { _id: 1 });
+    return users.map((user) => user._id);
+  }
+  
 //Get All Book
 app.get("/get-all-books", authenticateToken, async(req, res)=>{
     const {user} = req.user;
     try{
-        const books = await Book.find({userId: user._id}).sort({isPinned: -1});
+        const books = await Book.find({ userId: { $in: await getUserIdsByRole("admin") } }).sort({isPinned: -1});//retrieve all books added by admin
         return res.json({
             error: false,
             books,

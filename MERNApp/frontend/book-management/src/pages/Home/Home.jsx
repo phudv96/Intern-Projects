@@ -59,6 +59,7 @@ const Home = () => {
       const response = await axiosInstance.get("/get-user");
       if(response.data && response.data.user){
         setUserInfo(response.data.user);
+        console.log(response.data.user);
       }
     }catch(error){
       if(error.response.status === 401){
@@ -169,6 +170,7 @@ const Home = () => {
       </div>
     </div>
     
+    {userInfo && userInfo.role==='admin' &&(
     <button className='w-16 h-16 flex items-center justify-center rounded-2xl bg-primary hover:bg-blue-600 absolute right-10 bottom-10' 
     onClick={()=>{
       setOpenAddEditModal({isShown: true, type: "add", data: null});
@@ -176,6 +178,7 @@ const Home = () => {
     >
       <MdAdd className='text-[32px] text-white' />
     </button>
+    )}
 
     <Modal
       isOpen={openAddEditModal.isShown}

@@ -11,6 +11,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
+  const [role, setRole] = useState("");
 
   const navigate = useNavigate();
 
@@ -31,6 +32,12 @@ const Login = () => {
       setError("Please enter a password");
       return;
     }
+
+    if(!role){
+      setError("Please pick a role");
+      return;
+    }
+
     setError("");
 
     //SignUp API call
@@ -39,6 +46,7 @@ const Login = () => {
         fullName: name,
         email: email,
         password: password,
+        role: role,
       });
   
       //Handle successful registration
@@ -81,6 +89,31 @@ const Login = () => {
             <PasswordInput value = {password}
             onChange={(e)=> setPassword(e.target.value)} 
             />
+
+            <div className="flex items-center justify-between mt-4">
+              <div className="flex items-center">
+                <input
+                  type="radio"
+                  name="role"
+                  value="admin"
+                  checked={role === 'admin'}
+                  onChange={(e) => setRole(e.target.value)}
+                  className="mr-2"
+                />
+                <label htmlFor="admin">Admin</label>
+              </div>
+              <div className="flex items-center">
+                <input
+                  type="radio"
+                  name="role"
+                  value="guest"
+                  checked={role === 'guest'}
+                  onChange={(e) => setRole(e.target.value)}
+                  className="mr-2"
+                />
+                <label htmlFor="guest">Guest</label>
+              </div>
+            </div>
 
             {error && <p className='text-red-500 text-xs pb-1'>{error}</p>}
             
