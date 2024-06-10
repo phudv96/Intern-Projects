@@ -25,7 +25,6 @@ const Home = () => {
   const [userInfo, setUserInfo] = useState(null);
   const [allBooks, setAllBooks] = useState([]);
   const [isSearch, setIsSearch] = useState(false);
-  const [isPinned, setIsPinned] = useState(false);
   
   const navigate = useNavigate();
 
@@ -60,7 +59,6 @@ const Home = () => {
       const response = await axiosInstance.get("/get-user");
       if(response.data && response.data.user){
         setUserInfo(response.data.user);
-        console.log(response.data.user);
       }
     }catch(error){
       if(error.response.status === 401){
@@ -126,8 +124,8 @@ const Home = () => {
     const bookId = bookData._id;
     try {
       const response = await axiosInstance.put(`/update-pin/${bookId}`);
-      console.log(response.data);
       getAllBooks();
+      getUserInfo();
     } catch (error) {
       console.log(error);
     }
@@ -155,6 +153,7 @@ const Home = () => {
             author={item.author}
             content={item.content}
             tags={item.tags}
+            imageUrl = {item.imageUrl}
             isPinned={isPinned}
             onEdit={() => handleEdit(item)}
             onDelete={() => deleteBook(item)}

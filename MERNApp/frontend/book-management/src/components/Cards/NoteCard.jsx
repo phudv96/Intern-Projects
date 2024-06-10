@@ -4,7 +4,7 @@ import { HiBookmark } from "react-icons/hi2";
 import axiosInstance from '../../utils/axiosInstance';
 import imagePlaceHolder from '../../assets/No-Image-Placeholder.svg'
 
-const NoteCard = ({title, publishedYear, author, content, tags, isPinned, onEdit, onDelete, onPinNote}) => {
+const NoteCard = ({title, publishedYear, author, content, tags, imageUrl, isPinned, onEdit, onDelete, onPinNote}) => {
   const [userData, setUserData] = useState(null);
 
   useEffect(() => {
@@ -33,7 +33,7 @@ const NoteCard = ({title, publishedYear, author, content, tags, isPinned, onEdit
 
       <p className='text-xs text-slate-600 mt-2'>{author}</p>
 
-      <img src={imagePlaceHolder} alt="Book cover" className="w-full h-auto my-4" />
+      <img src={imageUrl ? imageUrl : imagePlaceHolder} alt="Book cover" className="w-full h-auto my-4" />
 
       <div className='flex-1 my-2'>
         <p className='text-xs text-slate-600'>{content.slice(0, 60)}</p>

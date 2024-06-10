@@ -144,48 +144,47 @@ app.get("/get-user", authenticateToken, async (req,res)=>{
 
 })
 //Add Book
-app.post("/add-book", authenticateToken, async(req, res)=>{
-    const {title, content, tags, author, publishedYear} = req.body;
-    const {user} = req.user;
-
-    if (!title){
-        return res.status(400).json({error: true, message:"Title is required"});
+app.post("/add-book", authenticateToken, async (req, res) => {
+    const { title, content, tags, author, publishedYear, imageUrl } = req.body;
+    const { user } = req.user;
+  
+    if (!title) {
+      return res.status(400).json({ error: true, message: "Title is required" });
     }
-
-    if (!content){
-        return res
-        .status(400)
-        .json({error: true, message: "Content is required"});
+  
+    if (!content) {
+      return res.status(400).json({ error: true, message: "Content is required" });
     }
-
-    try{
-        const book = new Book({
-            title,
-            content,
-            tags: tags || [],
-            author,
-            publishedYear,
-            userId: user._id,
-        });
-
-        await book.save();
-
-        return res.json({
-            error: false,
-            book,
-            message: "Book added successfully",
-        });
-    } catch (error){
-        return res.status(500).json({
-            error: true,
-            message: "Internal Server Error When Adding Book",
-        });
+  
+    try {
+      const book = new Book({
+        title,
+        content,
+        tags: tags || [],
+        author,
+        publishedYear,
+        imageUrl,
+        userId: user._id,
+      });
+  
+      await book.save();
+  
+      return res.json({
+        error: false,
+        book,
+        message: "Book added successfully",
+      });
+    } catch (error) {
+      return res.status(500).json({
+        error: true,
+        message: "Internal Server Error When Adding Book",
+      });
     }
-});
+  });
 //Edit Book
 app.put("/edit-book/:bookId", authenticateToken, async(req, res)=>{
     const bookId=req.params.bookId;
-    const {title, content, tags, author, publishedYear} = req.body;
+    const {title, content, tags, author, publishedYear, imageUrl} = req.body;
     const {user} = req.user;
 
     if(!title && !content && !tags){
@@ -206,7 +205,7 @@ app.put("/edit-book/:bookId", authenticateToken, async(req, res)=>{
         if(tags) book.tags =tags;
         if(author) book.author =author;
         if(publishedYear) book.publishedYear =publishedYear;
-        // if(isPinned) book.isPinned = isPinned;
+        if(imageUrl) book.imageUrl = imageUrl;
 
         await book.save();
         

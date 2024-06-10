@@ -10,7 +10,9 @@ const AddEditNotes = ({bookData, type, getAllBooks, onClose, showToastMessage}) 
     const [publishedYear, setPublishedYear] = useState(bookData?.publishedYear||"");
     const [author, setAuthor] = useState(bookData?.author||"");
     const [tags, setTags] = useState(bookData?.tags||[]);
+    const [imageUrl, setImageUrl] = useState('');
     const [error, setError] = useState(null);
+
 //Add New Book
     const addNewNote = async () => {
       try{
@@ -20,6 +22,7 @@ const AddEditNotes = ({bookData, type, getAllBooks, onClose, showToastMessage}) 
           tags,
           author,
           publishedYear,
+          imageUrl,
         });
         if (response.data && response.data.book){
           showToastMessage("Book Added Successfully");
@@ -42,6 +45,7 @@ const AddEditNotes = ({bookData, type, getAllBooks, onClose, showToastMessage}) 
           tags,
           author,
           publishedYear,
+          imageUrl,
         });
         if (response.data && response.data.book){
           showToastMessage("Book Updated Successfully");
@@ -137,6 +141,18 @@ const AddEditNotes = ({bookData, type, getAllBooks, onClose, showToastMessage}) 
         row={10}
         value={publishedYear}
         onChange={({target})=>setPublishedYear(target.value)}
+        />
+      </div>
+
+      <div className='flex flex-col gap-2 mt-4'>
+        <label className='input-label'>Image URL</label>
+        <textarea 
+        type='text'
+        className='text-sm text-slate-950 outline-none bg-slate-50 p-2 rounded'
+        placeholder='Put the URL to your image in this section'
+        row={10}
+        value={imageUrl}
+        onChange={({target})=>setImageUrl(target.value)}
         />
       </div>
 
