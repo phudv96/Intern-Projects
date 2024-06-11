@@ -4,6 +4,7 @@ import {Link, useNavigate} from 'react-router-dom';
 import PasswordInput from '../../components/Input/PasswordInput';
 import { validateEmail } from '../../utils/helper';
 import axiosInstance from '../../utils/axiosInstance';
+import OAuth from '../../components/Google/OAuth';
 
 const Login = () => {
 
@@ -70,6 +71,8 @@ const Login = () => {
             <button type = 'submit' className='btn-primary'>
               Login
             </button>
+
+            <OAuth type="logIn" message="Login With Google"/>
 
             <p className='text-sm text-center mt-4'>
               Not registered yet ? {" "}

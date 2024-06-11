@@ -15,3 +15,13 @@ export const  getInitials = (name) =>{
 
     return initials.toUpperCase();
 };
+
+export const generateRandomPassword = () => {
+    const charset =
+      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let password = "";
+    for (let i = 0; i < 12; i++) {
+      password += charset[Math.floor(Math.random() * charset.length)];
+    }
+    return password;
+  }

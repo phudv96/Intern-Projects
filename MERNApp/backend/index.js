@@ -182,6 +182,33 @@ app.post("/add-book", authenticateToken, async (req, res) => {
       });
     }
   });
+//Get a book
+app.get("/books/:title", authenticateToken, async (req, res) => {
+  const { title } = req.params;
+
+  try {
+    const book = await Book.findOne({
+      title: title,
+    });
+
+    if (!book) {
+      return res.status(404).json({
+        error: true,
+        message: "Book not found",
+      });
+    }
+
+    return res.json({
+      error: false,
+      book,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      error: true,
+      message: "Internal Server Error When Fetching Book",
+    });
+  }
+});
 //Edit Book
 app.put("/edit-book/:bookId", authenticateToken, async(req, res)=>{
     const bookId=req.params.bookId;
@@ -367,6 +394,8 @@ app.get("/search-books/", authenticateToken, async(req,res)=>{
         });
     }
 });
+
+
 app.listen(8000, ()=>{
   console.log("Server is running on port 8000");
 });

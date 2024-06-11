@@ -120,7 +120,7 @@ const Home = () => {
       console.log(error);
     }
   }
-
+ //update Pin status
   const updateIsPinned = async (bookData) => {
     const bookId = bookData._id;
     try {
@@ -132,6 +132,18 @@ const Home = () => {
     }
   };
 
+  const onClickBook = async (book) => {
+    const title = book.title;
+    try {
+      const response = await axiosInstance.get(`/books/${title}`);
+      const book = response.data;
+      navigate(`/book/${title}`);
+    } catch (error) {
+      console.error('Error fetching book data:', error);
+    }
+  };
+
+//load book upon DOM loaded in
   useEffect(() => {
     getAllBooks();
     getUserInfo();
@@ -159,6 +171,7 @@ const Home = () => {
             onEdit={() => handleEdit(item)}
             onDelete={() => deleteBook(item)}
             onPinNote={() => updateIsPinned(item)}
+            onClickBook={()=>onClickBook(item)}
           />          
         )})};
       </div>

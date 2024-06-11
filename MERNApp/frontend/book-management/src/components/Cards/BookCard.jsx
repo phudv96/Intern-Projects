@@ -4,8 +4,8 @@ import { HiBookmark } from "react-icons/hi2";
 import axiosInstance from '../../utils/axiosInstance';
 import imagePlaceHolder from '../../assets/No-Image-Placeholder.svg'
 
-const BookCard = ({title, publishedYear, author, content, tags, imageUrl, isPinned, onEdit, onDelete, onPinNote}) => {
-  const [userData, setUserData] = useState(null);
+const BookCard = ({title, publishedYear, author, content, tags, imageUrl, isPinned, onEdit, onDelete, onPinNote, onClickBook}) => {
+  const [userData, setUserData] = useState(null); //to check if admin or not, allowing edit and delete respectively
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -19,16 +19,25 @@ const BookCard = ({title, publishedYear, author, content, tags, imageUrl, isPinn
 
     fetchUserData();
   }, []);
+  
+  const handleClick = () => {
+    onClickBook(title);
+  };
 
   return ( 
-    <div className='border rounded p-4 bg-white hover:shadow-xl transition-all ease-in-out '>
+    <div className='border rounded p-4 bg-white hover:shadow-xl transition-all ease-in-out cursor-pointer'
+    onClick = {handleClick}>
       <div className='flex items-center justify-between'>
         <div>
             <h6 className='text-sm font-bold'>{title}</h6>
             <span className='text-xs text-slate-500'>{publishedYear}</span>
         </div>
         <div className="flex-shrink-0">
-          <HiBookmark className={`icon-btn ${isPinned ? 'text-primary' : 'text-slate-300'}`} onClick={onPinNote} />
+          <HiBookmark className={`icon-btn ${isPinned ? 'text-primary' : 'text-slate-300'}`} 
+            onClick={(e) => {
+              e.stopPropagation();
+              onPinNote();
+            }} />
         </div>
       </div>
 
@@ -37,7 +46,9 @@ const BookCard = ({title, publishedYear, author, content, tags, imageUrl, isPinn
       <img src={imageUrl ? imageUrl : imagePlaceHolder} alt="Book cover" className="w-full h-auto my-4" />
 
       <div className='flex-1 my-2'>
-        <p className='text-xs text-slate-600'>{content.slice(0, 60)}</p>
+        <p className='text-xs text-slate-600'>
+          {content.length > 60 ? `${content.slice(0, 60)}...` : content}
+        </p>
       </div>
 
 
@@ -50,8 +61,18 @@ const BookCard = ({title, publishedYear, author, content, tags, imageUrl, isPinn
           <div>
             {userData && userData.role === 'admin' && (
               <div className="flex items-center gap-2 self-end">
-                <MdCreate className="icon-btn hover:text-green-600" onClick={onEdit} />
-                <MdDelete className="icon-btn hover:text-red-500" onClick={onDelete} />
+                <MdCreate className="icon-btn hover:text-green-600" 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onEdit();
+                  }}
+                 />
+                <MdDelete className="icon-btn hover:text-red-500" 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDelete();
+                  }}
+                />
               </div>
             )}
           </div>
