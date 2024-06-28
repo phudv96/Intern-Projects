@@ -166,6 +166,7 @@ app.post("/add-book", authenticateToken, async (req, res) => {
         publishedYear,
         imageUrl,
         userId: user._id,
+        comments: [],
       });
   
       await book.save();
@@ -249,6 +250,44 @@ app.put("/edit-book/:bookId", authenticateToken, async(req, res)=>{
         });
     }
 });
+//Adding Comments
+app.put("/add-comment/:bookId", authenticateToken, async (req, res) => {
+  const bookId = req.params.bookId;
+  const {user} = req.user;
+  const { content } = req.body;
+
+  if (!content) {
+    return res.status(400).json({ error: true, message: "Comment is required" });
+  }
+
+  try {
+    const book = await Book.findOne({ _id: bookId });
+
+    if (!book) {
+      return res.status(404).json({ error: true, message: "Book not found" });
+    }
+
+    const comment = {
+      userId: user.fullName,
+      content,
+    };
+
+    book.comments.push(comment);
+    await book.save();
+
+    return res.json({
+      error: false,
+      book,
+      message: "Comment added successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      error: true,
+      message: "Internal Server Error When Adding Comment",
+    });
+  }
+});
+
 //Helper function to fetch user by role
 async function getUserIdsByRole(role) {
     const users = await User.find({ role }, { _id: 1 });

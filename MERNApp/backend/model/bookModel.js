@@ -10,6 +10,12 @@ const bookSchema = new Schema({
     publishedYear: { type: Number, required: true },
     imageUrl: { type: String }, // New field for image URL
     userId: { type: String, required: true },
+    comments: [
+      {
+        userId: { type: String, required: true },
+        content: { type: String, required: true },
+      },
+    ],
     createdOn: { type: Date, default: new Date().getTime() },
   });
 

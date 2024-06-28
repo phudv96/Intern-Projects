@@ -124,7 +124,7 @@ const Home = () => {
   const updateIsPinned = async (bookData) => {
     const bookId = bookData._id;
     try {
-      const response = await axiosInstance.put(`/update-pin/${bookId}`);
+      const response = await axiosInstance.put("/update-pin/"+bookId);
       getAllBooks();
       getUserInfo();
     } catch (error) {
@@ -135,7 +135,7 @@ const Home = () => {
   const onClickBook = async (book) => {
     const title = book.title;
     try {
-      const response = await axiosInstance.get(`/books/${title}`);
+      const response = await axiosInstance.get("/books/"+title);
       const book = response.data;
       navigate(`/book/${title}`);
     } catch (error) {
@@ -178,7 +178,7 @@ const Home = () => {
     </div>
     
     {userInfo && userInfo.role==='admin' &&(
-    <button className='w-16 h-16 flex items-center justify-center rounded-2xl bg-primary hover:bg-blue-600 absolute right-10 bottom-10' 
+    <button className='w-16 h-16 flex items-center justify-center rounded-2xl bg-primary hover:bg-blue-600 fixed right-10 bottom-10' 
     onClick={()=>{
       setOpenAddEditModal({isShown: true, type: "add", data: null});
     }}
