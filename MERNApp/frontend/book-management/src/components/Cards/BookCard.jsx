@@ -25,32 +25,35 @@ const BookCard = ({title, publishedYear, author, content, tags, imageUrl, isPinn
   };
 
   return ( 
-    <div className='border rounded p-4 bg-white hover:shadow-xl transition-all ease-in-out cursor-pointer'
-    onClick = {handleClick}>
+    <div className='border rounded p-4 bg-white hover:shadow-xl transition-all ease-in-out cursor-pointer relative' 
+      onClick={handleClick}>
       <div className='flex items-center justify-between'>
         <div>
-            <h6 className='text-sm font-bold'>{title}</h6>
-            <span className='text-xs text-slate-500'>{publishedYear}</span>
+          <h6 className='text-sm font-bold'>{title}</h6>
+          <span className='text-xs text-slate-500'>{publishedYear}</span>
         </div>
         <div className="flex-shrink-0">
           <HiBookmark className={`icon-btn ${isPinned ? 'text-primary' : 'text-slate-300'}`} 
             onClick={(e) => {
               e.stopPropagation();
               onPinNote();
-            }} />
+            }} 
+          />
         </div>
       </div>
 
       <p className='text-xs text-slate-600 mt-2'>{author}</p>
 
-      <img src={imageUrl ? imageUrl : imagePlaceHolder} alt="Book cover" className="w-full h-auto my-4" />
+      <div className="w-full max-w-sm aspect-w-5 overflow-hidden my-4 mx-auto">
+      <img src={imageUrl ? imageUrl : imagePlaceHolder} alt="Book cover" className="w-full h-full object-cover"/>
+      </div>
+      
 
       <div className='flex-1 my-2'>
         <p className='text-xs text-slate-600'>
-          {content.length > 60 ? `${content.slice(0, 60)}...` : content}
+          {content.length > 140 ? `${content.slice(0, 140)}...` : content}
         </p>
       </div>
-
 
       <div className='flex flex-col items-center justify-between mt-auto flex-grow'>
         <div className='text-xs text-slate-500 flex flex-wrap gap-1'>
@@ -58,25 +61,24 @@ const BookCard = ({title, publishedYear, author, content, tags, imageUrl, isPinn
             <span key={item}>{`#${item}`}</span>
           ))}
         </div>
-          <div>
-            {userData && userData.role === 'admin' && (
-              <div className="flex items-center gap-2 self-end">
-                <MdCreate className="icon-btn hover:text-green-600" 
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onEdit();
-                  }}
-                 />
-                <MdDelete className="icon-btn hover:text-red-500" 
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onDelete();
-                  }}
-                />
-              </div>
-            )}
-          </div>
       </div>
+
+      {userData && userData.role === 'admin' && (
+        <div className="absolute bottom-4 right-4 flex items-center gap-2">
+          <MdCreate className="icon-btn hover:text-green-600" 
+            onClick={(e) => {
+              e.stopPropagation();
+              onEdit();
+            }} 
+          />
+          <MdDelete className="icon-btn hover:text-red-500" 
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete();
+            }} 
+          />
+        </div>
+    )}
     </div>
   );
 };

@@ -2,14 +2,32 @@ import { useParams } from 'react-router-dom';
 import axiosInstance from '../../utils/axiosInstance';
 import { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import imagePlaceHolder from '../../assets/No-Image-Placeholder.svg'
+import imagePlaceHolder from '../../assets/No-Image-Placeholder.svg';
+import {MdDelete} from 'react-icons/md';
 
 const BookPage = () => {
   const { title } = useParams();
   const [book, setBook] = useState(null);
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState('');
+  const [userInfo, setUserInfo] = useState(null);
 
+const getUserInfo = async() => {
+  try{
+    const response = await axiosInstance.get("/get-user");
+    if(response.data && response.data.user){
+      setUserInfo(response.data.user);
+    }
+  }catch(error){
+    if(error.response.status === 401){
+      localStorage.clear();
+      console.log("please log in");
+      navigate("/login");
+    }
+  }
+};
+
+//fetch data as soon as the title param is loaded in
   useEffect(() => {
     const fetchBookData = async () => {
       try {
@@ -21,8 +39,10 @@ const BookPage = () => {
       }
     };
     fetchBookData();
-  }, [title]);//fetch data as soon as the title param is loaded in
+    getUserInfo();
+  }, [title]);
 
+  //push comment to database
   const handleCommentSubmit = async () => {
     try {
       if (book && book._id) {
@@ -32,8 +52,8 @@ const BookPage = () => {
         console.log("Comment added successfully");
 
         const response = await axiosInstance.get(`/books/${title}`);//refetching the new data to get the comment
-        setBook(response.data.book);//setting the new book data, included the new comment
-        setComments(response.data.book.comments);
+        setBook(response.data.book);//setting the new book data
+        setComments(response.data.book.comments);//set new comment to reload the comment section
         setCommentText('');
       }
     } catch (error) {
@@ -41,6 +61,21 @@ const BookPage = () => {
     }
   };
 
+  //deleteComment
+  const handleDeleteComment = async (commentId) => {
+    try {
+      const bookId = book._id;
+      await axiosInstance.delete(`/delete-comment/${bookId}/${commentId}`);
+      console.log("Comment deleted successfully");
+
+      const response = await axiosInstance.get(`/books/${title}`);//refetching the new data to get the comment
+      setBook(response.data.book);//setting the new book data
+      setComments(response.data.book.comments);//set new comment to reload the comment section
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+    }
+  };
+  
   if (!book) {
     return <div>Loading...</div>;
   }
@@ -61,14 +96,20 @@ const BookPage = () => {
             onChange={(e) => setCommentText(e.target.value)}
             placeholder="Write a comment..."
           />
-          <SubmitButton onClick={handleCommentSubmit}>Submit</SubmitButton>
+          <SubmitButton onClick={handleCommentSubmit}>Comment</SubmitButton>
           {comments.map((comment) => (
             <Comment key={comment._id}>
               <CommentText>
-                <strong>{comment.userId}:</strong> {comment.content}
+                <strong>{comment.userName}:</strong> {comment.content}
               </CommentText>
+              {userInfo && (userInfo.role==='admin' || userInfo._id === comment.userId) &&(
+              <DeleteButton onClick={() => handleDeleteComment(comment._id)}>
+                <MdDelete />
+              </DeleteButton>
+              )}
             </Comment>
           ))}
+
         </CommentsSection>
       </BookDetails>
     </BookContainer>
@@ -147,6 +188,9 @@ const SubmitButton = styled.button`
 `;
 
 const Comment = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin-top: 10px;
   padding: 10px;
   background: #f0f0f0;
@@ -155,10 +199,27 @@ const Comment = styled.div`
 
 const CommentText = styled.p`
   margin: 0;
+  flex: 1;
 `;
 
 const CommentDate = styled.p`
   margin: 0;
   font-size: 0.8rem;
   color: #888;
+`;
+
+const DeleteButton = styled.button`
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.5em;
+  
+  &.icon-btn {
+    padding: 0;
+    color: inherit;
+  }
+  
+  &:hover {
+    color: #f56565;
+  }
 `;

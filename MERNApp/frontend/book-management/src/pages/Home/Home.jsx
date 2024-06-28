@@ -52,7 +52,7 @@ const Home = () => {
     });
   };
 
-  //get user info
+  //get user info, useful for checking if logged in or not + checking roles.
 
   const getUserInfo = async() => {
     try{
@@ -131,7 +131,7 @@ const Home = () => {
       console.log(error);
     }
   };
-
+//handle clicking on a book
   const onClickBook = async (book) => {
     const title = book.title;
     try {
