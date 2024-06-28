@@ -166,6 +166,7 @@ const Home = () => {
             author={item.author}
             content={item.content}
             tags={item.tags}
+            commentNumb={item.comments.length}
             imageUrl = {item.imageUrl}
             isPinned={isPinned}
             onEdit={() => handleEdit(item)}

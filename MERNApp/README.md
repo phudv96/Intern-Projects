@@ -8,7 +8,8 @@ The Book Management App is a web application that allows users to manage their b
 - **Bookmark Books**: Both admin and guest accounts can bookmark books. Bookmarked books are unique to each account.
 - **Search Books**: Users can search for books by title, author, or tags.
 - **View Books Individually**: User can click on the book to view more information.
-- **Login Uisng Google Account**: User can sign up and login using google account, will be defaulted to guest account.
+- **Leave Comment**: User can leave comments on books. Guests can control and delete their own comments, while admin can delete any comments.
+- **Login Using Google Account**: User can sign up and login using google account, will be defaulted to guest account.
 - **Role-based Access Control**: The app has two user roles: admin and guest.
 
 ## Usage
@@ -33,8 +34,10 @@ http://localhost:5173/home
 - **Admin Account**:
 - Can perform all CRUD operations on books.
 - Can bookmark books.
-- Can search for books.
+- Can search for books by categories.
+- Can leave comment and delete any comments.
 
 - **Guest Account**:
 - Can only bookmark books.
-- Can search for books.
+- Can search for books by categories.
+- Can leave comment, but only delete their own comment.

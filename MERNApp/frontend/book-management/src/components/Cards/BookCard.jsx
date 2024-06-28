@@ -3,8 +3,9 @@ import { MdCreate, MdDelete} from 'react-icons/md';
 import { HiBookmark } from "react-icons/hi2";
 import axiosInstance from '../../utils/axiosInstance';
 import imagePlaceHolder from '../../assets/No-Image-Placeholder.svg'
+import { MdComment } from "react-icons/md";
 
-const BookCard = ({title, publishedYear, author, content, tags, imageUrl, isPinned, onEdit, onDelete, onPinNote, onClickBook}) => {
+const BookCard = ({title, publishedYear, author, content, tags, commentNumb, imageUrl, isPinned, onEdit, onDelete, onPinNote, onClickBook}) => {
   const [userData, setUserData] = useState(null); //to check if admin or not, allowing edit and delete respectively
 
   useEffect(() => {
@@ -79,6 +80,11 @@ const BookCard = ({title, publishedYear, author, content, tags, imageUrl, isPinn
           />
         </div>
     )}
+
+      <div className="absolute bottom-4 left-4 flex items-center gap-2">
+        <MdComment className="icon text-xl text-slate-400"/>
+        <span>{commentNumb}</span>
+      </div>
     </div>
   );
 };
