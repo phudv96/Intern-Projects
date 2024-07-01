@@ -167,6 +167,7 @@ app.post("/add-book", authenticateToken, async (req, res) => {
         imageUrl,
         userId: user._id,
         comments: [],
+        score: [],
       });
   
       await book.save();
@@ -322,50 +323,103 @@ app.delete("/delete-comment/:bookId/:commentId", authenticateToken, async (req, 
     });
   }
 });
+//Rating a book
+app.put("/update-score/:bookId", authenticateToken, async (req, res) => {
+  const bookId = req.params.bookId;
+  const { user } = req.user;
+  const { score } = req.body;
 
+  if (score !== 1 && score !== -1) {
+    return res.status(400).json({ error: true, message: "Invalid score value" });
+  }
+
+  try {
+    const book = await Book.findOne({ _id: bookId });
+
+    if (!book) {
+      return res.status(404).json({ error: true, message: "Book not found" });
+    }
+
+    const existingScoreIndex = book.score.findIndex((s) => s.userId === user._id);
+
+    if (existingScoreIndex !== -1) {
+      // User's score already exists
+      if (book.score[existingScoreIndex].value === score) {
+        // If the sent score matches the existing score value, reset it to 0
+        book.score[existingScoreIndex].value = 0;
+      } else {
+        // If the sent score is different, update it to the new value
+        book.score[existingScoreIndex].value = score;
+      }
+    } else {
+      // User's score doesn't exist, add a new score object
+      book.score.push({ userId: user._id, value: score });
+    }
+
+    await book.save();
+
+    return res.json({
+      error: false,
+      book,
+      message: "Score updated successfully",
+    });
+  } catch (error) {
+    console.error("Error updating score:", error);
+    return res.status(500).json({
+      error: true,
+      message: "Internal Server Error When Updating Score",
+    });
+  }
+});
 //Helper function to fetch user by role
 async function getUserIdsByRole(role) {
     const users = await User.find({ role }, { _id: 1 });
     return users.map((user) => user._id);
-  }
+};
   
 //Get All Book
 app.get("/get-all-books", authenticateToken, async (req, res) => {
-    const { user } = req.user;
-  
-    try {
-      // Retrieve all books added by admin
-      const allBooks = await Book.find();
-  
-      // Get the user's pinned books
-      const userPin = await User.findOne({ _id: user._id });
-      const pinnedBookIds = userPin.pinnedBooks;
-  
-      // Sort the books, putting the pinned books first
-      const sortedBooks = allBooks.map((book) => {
-        const isPinned = pinnedBookIds.includes(book._id.toString());
-        return {
-          ...book.toObject(),
-          isPinned,
-        };
-      }).sort((a, b) => {
-        // Sort by the 'isPinned' property, with pinned books first
-        return b.isPinned - a.isPinned;
-      });
-  
-      return res.json({
-        error: false,
-        books: sortedBooks,
-        message: "All books retrieved successfully",
-      });
-    } catch (error) {
-      return res.status(500).json({
-        error: true,
-        message: "Internal Server Error When Retrieving All Books",
-      });
-    }
-  });
-//Delete All Book
+  const { user } = req.user;
+
+  try {
+    // Retrieve all books added by admin
+    const allBooks = await Book.find();
+
+    // Get the user's pinned books
+    const userPin = await User.findOne({ _id: user._id });
+    const pinnedBookIds = userPin.pinnedBooks;
+
+    // Sort the books, putting the pinned books first, then sort by alphabetical order
+    const sortedBooks = allBooks.map((book) => {
+      const isPinned = pinnedBookIds.includes(book._id.toString());
+      return {
+        ...book.toObject(),
+        isPinned,
+      };
+    }).sort((a, b) => {
+      // Sort by the 'isPinned' property, with pinned books first
+      if (a.isPinned && !b.isPinned) {
+        return -1; // a comes first (pinned book)
+      } else if (!a.isPinned && b.isPinned) {
+        return 1; // b comes first (pinned book)
+      } else {
+        return a.title.localeCompare(b.title); // Sort alphabetically
+      }
+    });
+
+    return res.json({
+      error: false,
+      books: sortedBooks,
+      message: "All books retrieved successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      error: true,
+      message: "Internal Server Error When Retrieving All Books",
+    });
+  }
+});
+//Delete A Book
 app.delete("/delete-book/:bookId", authenticateToken, async(req, res)=>{
     const bookId=req.params.bookId;
     // const {user} = req.user;

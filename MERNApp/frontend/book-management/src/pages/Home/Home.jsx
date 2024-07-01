@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import Navbar from '../../components/Navbar/Navbar';
 import BookCard from '../../components/Cards/BookCard';
 import {MdAdd} from 'react-icons/md';
-import AddEditNotes from './AddEditBooks';
+import AddEditBooks from './AddEditBooks';
 import Modal from 'react-modal';
 import {useNavigate} from 'react-router-dom';
 import axiosInstance from '../../utils/axiosInstance';
@@ -24,6 +24,7 @@ const Home = () => {
 
   const [userInfo, setUserInfo] = useState(null);
   const [allBooks, setAllBooks] = useState([]);
+  const [originalBooks, setOriginalBooks] = useState([]);
   const [isSearch, setIsSearch] = useState(false);
   
   const navigate = useNavigate();
@@ -75,6 +76,7 @@ const Home = () => {
 
       if(response.data && response.data.books){
         setAllBooks(response.data.books);
+        setOriginalBooks(response.data.books);
       }
     } catch(error){
       console.log("An unexpected error occurred. Please try again");
@@ -131,7 +133,26 @@ const Home = () => {
       console.log(error);
     }
   };
-//handle clicking on a book
+  //scoring a book
+  const updateScore = async(score, bookData) => {
+    const bookId = bookData._id;
+    try{
+      const response = await axiosInstance.put("update-score/"+bookId, {score});
+      console.log(`bookId: ${bookId}, score: ${score}`);
+      getAllBooks();
+    } catch(error){
+      console.log(error);
+    }
+  }
+  //calculate score
+  const calculateScore = (book) => {
+    let totalPoints = 0;
+    book.score.forEach((score) => {
+      totalPoints += score.value;
+    });
+    return totalPoints;
+  };
+  //handle clicking on a book
   const onClickBook = async (book) => {
     const title = book.title;
     try {
@@ -142,8 +163,22 @@ const Home = () => {
       console.error('Error fetching book data:', error);
     }
   };
+  //sort book by score
+  const sortBooksByScore = (books) => {
+    return books.sort((a, b) => calculateScore(b) - calculateScore(a));
+  };
+  // Sort books handler
+  const handleSortBooks = (sort) => {
+    if (sort) {
+      const sortedBooks = sortBooksByScore([...allBooks]);
+      setAllBooks(sortedBooks);
+    } else {
+      setAllBooks(originalBooks);
+    }
+  };
 
-//load book upon DOM loaded in
+  
+  //load book upon DOM loaded in
   useEffect(() => {
     getAllBooks();
     getUserInfo();
@@ -152,9 +187,9 @@ const Home = () => {
 
   return (
     <>
-    <Navbar userInfo={userInfo} onSearchBook={onSearchBook} handleClearSearch = {handleClearSearch}/>
+    <Navbar userInfo={userInfo} onSearchBook={onSearchBook} handleClearSearch = {handleClearSearch} onSortBooks = {handleSortBooks}/>
 
-    <div className='container mx-auto'>
+    <div className='container mx-auto mt-16'>
       <div className='grid grid-cols-3 gap-4 mt-8'>
         {allBooks.map((item, index) => {
           let isPinned = userInfo.pinnedBooks.includes(item._id);
@@ -167,12 +202,14 @@ const Home = () => {
             content={item.content}
             tags={item.tags}
             commentNumb={item.comments.length}
+            score={calculateScore(item)}
             imageUrl = {item.imageUrl}
             isPinned={isPinned}
             onEdit={() => handleEdit(item)}
             onDelete={() => deleteBook(item)}
-            onPinNote={() => updateIsPinned(item)}
+            onPinBook={() => updateIsPinned(item)}
             onClickBook={()=>onClickBook(item)}
+            onScore={(score)=>updateScore(score, item)}
           />          
         )})};
       </div>
@@ -199,7 +236,7 @@ const Home = () => {
       contentLabel=''
       className='w-[40%] max-h-3/4 bg-white rounded-md mx-auto mt-14 p-5 overflow-scroll'
     >
-      <AddEditNotes
+      <AddEditBooks
         type={openAddEditModal.type}
         bookData={openAddEditModal.data}
         onClose={()=>{setOpenAddEditModal({isShown: false, type: "add", data: null});}}

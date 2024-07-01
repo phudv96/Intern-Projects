@@ -1,11 +1,11 @@
 import React, {useState, useEffect} from 'react';
-import { MdCreate, MdDelete} from 'react-icons/md';
+import { MdCreate, MdDelete, MdComment, MdThumbDown, MdThumbUp} from 'react-icons/md';
 import { HiBookmark } from "react-icons/hi2";
 import axiosInstance from '../../utils/axiosInstance';
 import imagePlaceHolder from '../../assets/No-Image-Placeholder.svg'
-import { MdComment } from "react-icons/md";
 
-const BookCard = ({title, publishedYear, author, content, tags, commentNumb, imageUrl, isPinned, onEdit, onDelete, onPinNote, onClickBook}) => {
+const BookCard = ({title, publishedYear, author, content, tags, commentNumb, score, imageUrl, isPinned, 
+  onEdit, onDelete, onPinBook, onClickBook, onScore}) => {
   const [userData, setUserData] = useState(null); //to check if admin or not, allowing edit and delete respectively
 
   useEffect(() => {
@@ -26,7 +26,7 @@ const BookCard = ({title, publishedYear, author, content, tags, commentNumb, ima
   };
 
   return ( 
-    <div className='border rounded p-4 bg-white hover:shadow-xl transition-all ease-in-out cursor-pointer relative' 
+    <div className='border rounded p-4 bg-white hover:shadow-xl transition-all ease-in-out cursor-pointer relative mt-8' 
       onClick={handleClick}>
       <div className='flex items-center justify-between'>
         <div>
@@ -37,7 +37,7 @@ const BookCard = ({title, publishedYear, author, content, tags, commentNumb, ima
           <HiBookmark className={`icon-btn ${isPinned ? 'text-primary' : 'text-slate-300'}`} 
             onClick={(e) => {
               e.stopPropagation();
-              onPinNote();
+              onPinBook();
             }} 
           />
         </div>
@@ -46,7 +46,7 @@ const BookCard = ({title, publishedYear, author, content, tags, commentNumb, ima
       <p className='text-xs text-slate-600 mt-2'>{author}</p>
 
       <div className="w-full max-w-sm aspect-w-5 overflow-hidden my-4 mx-auto">
-      <img src={imageUrl ? imageUrl : imagePlaceHolder} alt="Book cover" className="w-full h-full object-cover"/>
+      <img src={imageUrl ? imageUrl : imagePlaceHolder} alt="Book cover" className="w-full h-full object-fit-contain"/>
       </div>
       
 
@@ -84,6 +84,21 @@ const BookCard = ({title, publishedYear, author, content, tags, commentNumb, ima
       <div className="absolute bottom-4 left-4 flex items-center gap-2">
         <MdComment className="icon text-xl text-slate-400"/>
         <span>{commentNumb}</span>
+        <MdThumbUp className="icon-btn hover:text-blue-600" 
+          onClick={(e)=>{
+            console.log(score);
+            e.stopPropagation();
+            onScore(1);
+          }}
+        />
+        <span>{score}</span>
+        <MdThumbDown className="icon-btn hover:text-red-600"
+          onClick={(e)=>{
+            console.log(score);
+            e.stopPropagation();
+            onScore(-1);
+          }}
+         />
       </div>
     </div>
   );

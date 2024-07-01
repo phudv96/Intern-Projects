@@ -19,7 +19,7 @@ const SearchBar = ({value, onChange, handleSearch, onClearSearch}) => {
 
 
   return (
-    <div className='w-80 flex items-center px-4 bg-slate-100 rounded-md'>
+    <div className='w-80 flex items-center px-4 bg-slate-100 rounded-md z-50'>
       <input 
       type = 'text'
       placeholder = 'Search Books by'
@@ -35,7 +35,7 @@ const SearchBar = ({value, onChange, handleSearch, onClearSearch}) => {
         {selectedOption}
       </div>
       {isDropdownOpen && (
-        <div className='absolute z-10 w-40 bg-white shadow-md rounded-md'>
+        <div className='absolute w-40 bg-white shadow-md rounded-md'>
           <div
             className='px-4 py-2 hover:bg-slate-100 cursor-pointer'
             onClick={() => handleOptionSelect('title')}
@@ -43,7 +43,7 @@ const SearchBar = ({value, onChange, handleSearch, onClearSearch}) => {
             Title
           </div>
           <div
-            className='px-4 py-2 hover:bg-slate-100 cursor-pointer'
+            className='px-4 py-2 hover:bg-slate-100 cursor-pointer '
             onClick={() => handleOptionSelect('author')}
           >
             Author

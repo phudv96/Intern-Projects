@@ -17,6 +17,12 @@ const bookSchema = new Schema({
         content: { type: String, required: true },
       },
     ],
+    score: [
+      {
+        userId: { type: String, required: true },
+        value: { type: Number, required: true },
+      },
+    ],
     createdOn: { type: Date, default: new Date().getTime() },
   });
 
